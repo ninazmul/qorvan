@@ -1,0 +1,323 @@
+import Link from "next/link";
+import { getProducts } from "@/lib/actions/product.actions";
+import { getCategories } from "@/lib/actions/category.actions";
+import { getHeroSlides } from "@/lib/actions/hero.actions";
+import ProductCard from "@/components/storefront/ProductCard";
+import { ShieldCheck, ArrowRight, Sparkles, Star, Award, Crown, Truck } from "lucide-react";
+
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const [productsRes, categoriesRes, heroSlidesRes] = await Promise.all([
+    getProducts({ limit: 12 }),
+    getCategories(),
+    getHeroSlides({ enabled: true }),
+  ]);
+
+  let products = productsRes.success ? productsRes.data : [];
+  let categories = categoriesRes.success ? categoriesRes.data : [];
+  const heroSlide = heroSlidesRes.success && heroSlidesRes.data?.length ? heroSlidesRes.data[0] : null;
+  const heroTitle = heroSlide?.title || "The Pinnacle of Luxury & Elegance";
+  const heroSubtitle =
+    heroSlide?.subtitle ||
+    "Explore QORVAN's masterwork of Italian silk tie sets, full-grain executive leather goods, bespoke formal tailoring, and royal haute couture.";
+  const heroImage =
+    heroSlide?.backgroundImage ||
+    "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1600";
+  const heroButtonText = heroSlide?.buttonText || "Shop Collection";
+  const heroButtonUrl = heroSlide?.buttonUrl || "/shop";
+
+  // Seed sample luxury products if database has no products yet
+  if (products.length === 0) {
+    products = [
+      {
+        _id: "demo-1",
+        title: "Royal Italian Silk Tie & Cufflink Set",
+        slug: "royal-italian-silk-tie-set",
+        price: 3850,
+        compareAtPrice: 4500,
+        featuredImage: "https://images.unsplash.com/photo-1589756823695-278bc923f962?w=800",
+        sku: "QRV-TIE-01",
+        stock: 12,
+        isFeatured: true,
+        isBestSeller: true,
+        category: { name: "Premium Tie Sets", slug: "tie-sets" },
+        ratings: { average: 5.0, count: 18 },
+      },
+      {
+        _id: "demo-2",
+        title: "Handcrafted Bifold Full-Grain Leather Wallet",
+        slug: "handcrafted-leather-wallet",
+        price: 2950,
+        compareAtPrice: 3500,
+        featuredImage: "https://images.unsplash.com/photo-1627123424574-724758594e93?w=800",
+        sku: "QRV-WLT-02",
+        stock: 8,
+        isFeatured: true,
+        isTrending: true,
+        category: { name: "Leather Wallets", slug: "leather-wallets" },
+        ratings: { average: 4.9, count: 24 },
+      },
+      {
+        _id: "demo-3",
+        title: "Executive Full-Grain Leather Belt (Gold Buckle)",
+        slug: "executive-leather-belt",
+        price: 3200,
+        compareAtPrice: 3800,
+        featuredImage: "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=800",
+        sku: "QRV-BLT-03",
+        stock: 15,
+        isFeatured: true,
+        category: { name: "Leather Belts", slug: "leather-belts" },
+        ratings: { average: 5.0, count: 12 },
+      },
+      {
+        _id: "demo-4",
+        title: "Presidential Briefcase Leather Bag",
+        slug: "presidential-briefcase-leather-bag",
+        price: 12500,
+        compareAtPrice: 15000,
+        featuredImage: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800",
+        sku: "QRV-BAG-04",
+        stock: 5,
+        isFeatured: true,
+        isBestSeller: true,
+        category: { name: "Bags", slug: "bags" },
+        ratings: { average: 5.0, count: 32 },
+      },
+      {
+        _id: "demo-5",
+        title: "Royal Egyptian Cotton Formal Shirt (White)",
+        slug: "royal-egyptian-cotton-formal-shirt",
+        price: 4200,
+        compareAtPrice: 4800,
+        featuredImage: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=800",
+        sku: "QRV-SHIRT-05",
+        stock: 20,
+        isNewArrival: true,
+        category: { name: "Formal Shirts", slug: "formal-shirts" },
+        ratings: { average: 4.8, count: 9 },
+      },
+      {
+        _id: "demo-6",
+        title: "Embellished Velvet Royal Abaya",
+        slug: "embellished-velvet-royal-abaya",
+        price: 8900,
+        compareAtPrice: 10500,
+        featuredImage: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=800",
+        sku: "QRV-ABY-06",
+        stock: 7,
+        isFeatured: true,
+        isTrending: true,
+        category: { name: "Burkas / Abayas", slug: "burkas-abayas" },
+        ratings: { average: 5.0, count: 41 },
+      },
+    ];
+  }
+
+  const defaultCategories = [
+    { name: "Premium Tie Sets", slug: "tie-sets", image: "https://images.unsplash.com/photo-1589756823695-278bc923f962?w=800" },
+    { name: "Leather Wallets", slug: "leather-wallets", image: "https://images.unsplash.com/photo-1627123424574-724758594e93?w=800" },
+    { name: "Leather Belts", slug: "leather-belts", image: "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=800" },
+    { name: "Executive Bags", slug: "bags", image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800" },
+    { name: "Formal Shirts", slug: "formal-shirts", image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=800" },
+    { name: "Burkas / Abayas", slug: "burkas-abayas", image: "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=800" },
+  ];
+
+  const catList = categories.length > 0 ? categories : defaultCategories;
+
+  return (
+    <div className="space-y-20 pb-20">
+      {/* Hero Banner Section */}
+      <section className="relative bg-amber-950 text-amber-50 overflow-hidden border-b border-amber-900/40">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={heroImage}
+            alt="QORVAN Luxury Fashion"
+            className="w-full h-full object-cover opacity-20 filter contrast-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-950 via-amber-950/90 to-transparent" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36 flex flex-col justify-center min-h-[600px]">
+          <div className="max-w-2xl space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-widest">
+              <Crown className="w-3.5 h-3.5" /> Handcrafted Atelier Collection
+            </div>
+            <h1 className="text-4xl sm:text-6xl font-extrabold font-serif tracking-tight leading-tight text-white">
+              {heroTitle.includes("&") ? heroTitle.split("&")[0].trim() : heroTitle} <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100">
+                {heroTitle.includes("&") ? `& ${heroTitle.split("&").slice(1).join("&").trim()}` : "Luxury & Elegance"}
+              </span>
+            </h1>
+            <p className="text-base sm:text-lg text-amber-200/90 font-light leading-relaxed">
+              {heroSubtitle}
+            </p>
+
+            <div className="flex flex-wrap gap-4 pt-4">
+              <Link
+                href={heroButtonUrl}
+                className="px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-amber-950 font-bold text-xs uppercase tracking-widest rounded-lg hover:from-amber-400 hover:to-amber-500 transition shadow-xl flex items-center gap-2"
+              >
+                {heroButtonText} <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/about"
+                className="px-8 py-4 border border-amber-700/80 text-amber-200 font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-amber-900/40 transition"
+              >
+                Discover Craftsmanship
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Categories Grid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center max-w-xl mx-auto space-y-2">
+          <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-700">
+            Curated Categories
+          </span>
+          <h2 className="text-3xl font-bold font-serif text-gray-900">
+            Signature Products
+          </h2>
+          <div className="w-12 h-0.5 bg-amber-600 mx-auto" />
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {catList.map((cat: any) => (
+            <Link
+              key={cat.slug}
+              href={`/shop?category=${cat.slug}`}
+              className="group relative rounded-2xl overflow-hidden aspect-[3/4] border border-amber-900/10 shadow-sm hover:shadow-xl transition"
+            >
+              <img
+                src={cat.image || "https://images.unsplash.com/photo-1589756823695-278bc923f962?w=800"}
+                alt={cat.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-amber-950 via-amber-950/40 to-transparent" />
+              <div className="absolute bottom-4 left-3 right-3 text-center">
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider group-hover:text-amber-300 transition">
+                  {cat.name}
+                </h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Luxury Products Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b pb-4 border-amber-900/10">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-700">
+              QORVAN Essentials
+            </span>
+            <h2 className="text-3xl font-bold font-serif text-gray-900 mt-1">
+              Featured Luxury Products
+            </h2>
+          </div>
+          <Link
+            href="/shop"
+            className="text-xs font-bold uppercase tracking-widest text-amber-800 hover:text-amber-950 inline-flex items-center gap-1 mt-2 sm:mt-0"
+          >
+            View Entire Catalog <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {products.slice(0, 8).map((product: any) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </div>
+      </section>
+
+      {/* Heritage & Brand Story Section */}
+      <section className="bg-amber-950 text-amber-100 py-20 border-y border-amber-900/50 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <span className="text-xs font-bold uppercase tracking-[0.3em] text-amber-400">
+              The Atelier Legacy
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-extrabold font-serif text-white leading-tight">
+              Uncompromising Quality & Handcrafted Luxury
+            </h2>
+            <p className="text-sm text-amber-200/80 leading-relaxed font-light">
+              Every QORVAN piece represents hours of dedicated craftsmanship by master artisans. From selecting full-grain leathers to sourcing 100% pure silk and Egyptian long-staple cotton, our commitment to perfection defines executive luxury.
+            </p>
+
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-amber-900/60">
+              <div>
+                <div className="text-2xl font-bold text-amber-400 font-serif">100%</div>
+                <div className="text-[11px] text-amber-300 uppercase tracking-wider">Full-Grain Leather</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-amber-400 font-serif">Pure</div>
+                <div className="text-[11px] text-amber-300 uppercase tracking-wider">Italian Silk</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-amber-400 font-serif">COD</div>
+                <div className="text-[11px] text-amber-300 uppercase tracking-wider">All Bangladesh</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative aspect-square rounded-2xl overflow-hidden border border-amber-800/40 shadow-2xl">
+            <img
+              src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=1000"
+              alt="Craftsmanship QORVAN"
+              className="w-full h-full object-cover filter contrast-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-amber-950/80 via-transparent to-transparent" />
+          </div>
+        </div>
+      </section>
+
+      {/* Customer Testimonials Grid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center max-w-xl mx-auto space-y-2">
+          <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-700">
+            Client Reflections
+          </span>
+          <h2 className="text-3xl font-bold font-serif text-gray-900">
+            Endorsed by Executives
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              quote: "The silk tie set and briefcase leather quality surpassed my highest expectations. Arrived in Dhaka within 24 hours via Cash on Delivery.",
+              name: "Tariqul Islam",
+              title: "Managing Director, Dhaka",
+            },
+            {
+              quote: "QORVAN's leather wallet and belt craftsmanship match luxury European fashion houses. Impeccable attention to detail.",
+              name: "Rahim Chowdhury",
+              title: "Senior Partner, Chittagong",
+            },
+            {
+              quote: "The royal abaya material and velvet finish are breathtaking. Fast delivery and extremely courteous concierge service.",
+              name: "Nusrat Jahan",
+              title: "Fashion Curator, Sylhet",
+            },
+          ].map((t, idx) => (
+            <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
+              <div className="flex text-amber-500 gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-amber-500" />
+                ))}
+              </div>
+              <p className="text-xs text-gray-700 italic leading-relaxed">"{t.quote}"</p>
+              <div className="border-t pt-3">
+                <h4 className="text-xs font-bold text-gray-900">{t.name}</h4>
+                <p className="text-[10px] text-amber-800 font-semibold">{t.title}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
