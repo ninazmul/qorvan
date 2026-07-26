@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ShieldCheck, Truck, RotateCcw, Headphones, Lock } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -50,14 +51,9 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 border-b border-zinc-200 pb-12">
         {/* Brand Info */}
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded bg-black text-white flex items-center justify-center border border-black">
-              <span className="text-lg font-bold font-serif">Q</span>
-            </div>
-            <span className="text-xl font-extrabold tracking-[0.25em] text-black font-serif uppercase">
-              QORVAN
-            </span>
-          </div>
+          <Link href="/" className="flex items-center gap-3">
+            <Image src="/assets/images/logo.png" alt="Logo" width={100} height={100} className="w-full h-full object-contain" />
+          </Link>
           <p className="text-xs text-zinc-600 leading-relaxed">
             QORVAN is a pinnacle luxury fashion and leather atelier dedicated to impeccable craftsmanship, timeless elegance, and executive style.
           </p>

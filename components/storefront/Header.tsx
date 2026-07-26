@@ -6,6 +6,7 @@ import { ShoppingBag, Heart, Search, User, Menu, X, ShieldCheck } from "lucide-r
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 import CartDrawer from "./CartDrawer";
+import Image from "next/image";
 
 export default function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function Header() {
       {/* Top Announcement Bar */}
       <div className="bg-black text-zinc-300 py-1.5 px-4 text-center text-[11px] font-semibold tracking-wider flex items-center justify-center gap-2 border-b border-zinc-800">
         <ShieldCheck className="w-3.5 h-3.5 text-white" />
-        <span>COMPLIMENTARY EXPRESS DELIVERY ACROSS BANGLADESH ON ORDERS OVER ৳5,000 | CASH ON DELIVERY ONLY</span>
+        <span>Free express delivery on orders over ৳5,000 | COD</span>
       </div>
 
       {/* Main Bar */}
@@ -47,17 +48,7 @@ export default function Header() {
 
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-md bg-black text-white border border-black flex items-center justify-center">
-            <span className="text-2xl font-extrabold font-serif">Q</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xl sm:text-2xl font-extrabold text-black tracking-[0.25em] font-serif uppercase">
-              QORVAN
-            </span>
-            <span className="text-[9px] text-zinc-500 font-bold tracking-[0.3em] uppercase -mt-1">
-              LUXURY FASHION
-            </span>
-          </div>
+          <Image src="/assets/images/logo.png" alt="Logo" width={100} height={100} className="w-full h-full object-contain" />
         </Link>
 
         {/* Desktop Navigation Menu */}

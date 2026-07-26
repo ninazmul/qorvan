@@ -30,15 +30,15 @@ export default async function ShopPage({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
       {/* Top Banner Header */}
-      <div className="bg-white text-black p-8 sm:p-12 rounded-3xl border border-gray-200 relative overflow-hidden shadow-xl">
+      <div className="bg-black text-white p-8 sm:p-12 rounded-3xl border border-gray-200 relative overflow-hidden shadow-xl">
         <div className="relative z-10 max-w-xl space-y-3">
-          <span className="text-xs font-bold uppercase tracking-[0.3em] text-gray-600">
+          <span className="text-xs font-bold uppercase tracking-[0.3em] text-gray-300">
             QORVAN Luxury Collection
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold font-serif">
             {params.category ? params.category.replace("-", " ").toUpperCase() : "Catalog Overview"}
           </h1>
-          <p className="text-xs sm:text-sm text-gray-600/80 leading-relaxed">
+          <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
             Handcrafted luxury ties, wallets, belts, bags, formal shirts, and abayas tailored to perfection.
           </p>
         </div>
@@ -56,9 +56,8 @@ export default async function ShopPage({
               <li>
                 <Link
                   href="/shop"
-                  className={`block py-1 px-2 rounded ${
-                    !params.category ? "bg-gray-200 text-black font-bold" : "text-gray-700 hover:text-gray-800"
-                  }`}
+                  className={`block py-1 px-2 rounded ${!params.category ? "bg-gray-200 text-black font-bold" : "text-gray-700 hover:text-gray-800"
+                    }`}
                 >
                   All Products
                 </Link>
@@ -67,11 +66,10 @@ export default async function ShopPage({
                 <li key={c.slug}>
                   <Link
                     href={`/shop?category=${c.slug}`}
-                    className={`block py-1 px-2 rounded ${
-                      params.category === c.slug
-                        ? "bg-gray-200 text-black font-bold"
-                        : "text-gray-700 hover:text-gray-800"
-                    }`}
+                    className={`block py-1 px-2 rounded ${params.category === c.slug
+                      ? "bg-gray-200 text-black font-bold"
+                      : "text-gray-700 hover:text-gray-800"
+                      }`}
                   >
                     {c.name}
                   </Link>
