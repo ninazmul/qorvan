@@ -39,7 +39,7 @@ export default function ReturnRequestsClient({ initialRequests }: { initialReque
           <tbody className="divide-y divide-gray-100">
             {requests.map((r) => (
               <tr key={r._id} className="hover:bg-gray-50 transition">
-                <td className="py-3.5 px-4 font-mono font-bold text-amber-900">{r.orderNumber}</td>
+                <td className="py-3.5 px-4 font-mono font-bold text-gray-900">{r.orderNumber}</td>
                 <td className="py-3.5 px-4">
                   <div className="font-bold text-gray-900">{r.customerName}</div>
                   <div className="text-[10px] text-gray-400 font-mono">{r.customerEmail}</div>
@@ -57,7 +57,7 @@ export default function ReturnRequestsClient({ initialRequests }: { initialReque
                         ? "bg-emerald-100 text-emerald-800"
                         : r.status === "rejected"
                         ? "bg-rose-100 text-rose-800"
-                        : "bg-amber-100 text-amber-800"
+                        : "bg-gray-100 text-gray-800"
                     }`}
                   >
                     {r.status}

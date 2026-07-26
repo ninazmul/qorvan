@@ -28,10 +28,10 @@ export default function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-amber-950/95 backdrop-blur-md text-amber-50 border-b border-amber-800/40 shadow-lg">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md text-black border-b border-zinc-200 shadow-sm">
       {/* Top Announcement Bar */}
-      <div className="bg-amber-900/60 text-amber-200 py-1.5 px-4 text-center text-[11px] font-semibold tracking-wider flex items-center justify-center gap-2 border-b border-amber-800/30">
-        <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+      <div className="bg-black text-zinc-300 py-1.5 px-4 text-center text-[11px] font-semibold tracking-wider flex items-center justify-center gap-2 border-b border-zinc-800">
+        <ShieldCheck className="w-3.5 h-3.5 text-white" />
         <span>COMPLIMENTARY EXPRESS DELIVERY ACROSS BANGLADESH ON ORDERS OVER ৳5,000 | CASH ON DELIVERY ONLY</span>
       </div>
 
@@ -40,75 +40,75 @@ export default function Header() {
         {/* Left Mobile Menu Button */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden text-amber-300 p-2 hover:text-white"
+          className="lg:hidden text-black p-2 hover:text-zinc-600 transition"
         >
           {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
 
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-md bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
-            <span className="text-2xl font-extrabold text-amber-400 font-serif">Q</span>
+          <div className="w-10 h-10 rounded-md bg-black text-white border border-black flex items-center justify-center">
+            <span className="text-2xl font-extrabold font-serif">Q</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-xl sm:text-2xl font-extrabold text-white tracking-[0.25em] font-serif uppercase">
+            <span className="text-xl sm:text-2xl font-extrabold text-black tracking-[0.25em] font-serif uppercase">
               QORVAN
             </span>
-            <span className="text-[9px] text-amber-400 font-semibold tracking-[0.3em] uppercase -mt-1">
+            <span className="text-[9px] text-zinc-500 font-bold tracking-[0.3em] uppercase -mt-1">
               LUXURY FASHION
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation Menu */}
-        <nav className="hidden lg:flex items-center space-x-6 text-xs font-semibold uppercase tracking-wider text-amber-200">
-          <Link href="/shop" className="hover:text-amber-400 transition">Shop</Link>
-          <Link href="/shop?category=tie-sets" className="hover:text-amber-400 transition">Tie Sets</Link>
-          <Link href="/shop?category=leather-wallets" className="hover:text-amber-400 transition">Leather Wallets</Link>
-          <Link href="/shop?category=bags" className="hover:text-amber-400 transition">Bags</Link>
-          <Link href="/shop?category=formal-shirts" className="hover:text-amber-400 transition">Shirts</Link>
-          <Link href="/shop?category=burkas-abayas" className="hover:text-amber-400 transition">Abayas</Link>
-          <Link href="/about" className="hover:text-amber-400 transition">Our Story</Link>
+        <nav className="hidden lg:flex items-center space-x-6 text-xs font-bold uppercase tracking-wider text-black">
+          <Link href="/shop" className="hover:text-zinc-500 transition">Shop</Link>
+          <Link href="/shop?category=tie-sets" className="hover:text-zinc-500 transition">Tie Sets</Link>
+          <Link href="/shop?category=leather-wallets" className="hover:text-zinc-500 transition">Leather Wallets</Link>
+          <Link href="/shop?category=bags" className="hover:text-zinc-500 transition">Bags</Link>
+          <Link href="/shop?category=formal-shirts" className="hover:text-zinc-500 transition">Shirts</Link>
+          <Link href="/shop?category=burkas-abayas" className="hover:text-zinc-500 transition">Abayas</Link>
+          <Link href="/about" className="hover:text-zinc-500 transition">Our Story</Link>
         </nav>
 
         {/* Right Icons */}
-        <div className="flex items-center space-x-4">
-          <Link href="/shop" className="p-2 text-amber-300 hover:text-amber-100 transition hidden sm:block">
+        <div className="flex items-center space-x-3">
+          <Link href="/shop" className="p-2 text-black hover:text-zinc-500 transition hidden sm:block">
             <Search className="w-5 h-5" />
           </Link>
 
-          <Link href="/account" className="p-2 text-amber-300 hover:text-amber-100 transition relative">
+          <Link href="/account" className="p-2 text-black hover:text-zinc-500 transition relative">
             <Heart className="w-5 h-5" />
             {totalWishlist > 0 && (
-              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-amber-500 text-amber-950 text-[9px] font-black flex items-center justify-center">
+              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-black text-white text-[9px] font-black flex items-center justify-center">
                 {totalWishlist}
               </span>
             )}
           </Link>
 
-          <Link href="/account" className="p-2 text-amber-300 hover:text-amber-100 transition">
+          <Link href="/account" className="p-2 text-black hover:text-zinc-500 transition">
             <User className="w-5 h-5" />
           </Link>
 
           <button
             onClick={() => setIsCartOpen(true)}
-            className="p-2 text-amber-300 hover:text-amber-100 transition relative flex items-center gap-1 bg-amber-900/40 px-3 py-1.5 rounded-full border border-amber-700/50"
+            className="p-2 text-white transition relative flex items-center gap-1.5 bg-black px-3.5 py-1.5 rounded-full border border-black hover:bg-zinc-800"
           >
-            <ShoppingBag className="w-5 h-5 text-amber-400" />
-            <span className="text-xs font-bold text-amber-100">{totalItems}</span>
+            <ShoppingBag className="w-4 h-4 text-white" />
+            <span className="text-xs font-bold text-white">{totalItems}</span>
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-amber-950 border-t border-amber-900 px-4 pt-3 pb-6 space-y-2">
+        <div className="lg:hidden bg-white border-t border-zinc-200 px-4 pt-3 pb-6 space-y-2">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="block px-3 py-2 text-xs font-bold uppercase tracking-wider text-amber-200 hover:text-amber-400 hover:bg-amber-900/40 rounded transition"
+              className="block px-3 py-2 text-xs font-bold uppercase tracking-wider text-black hover:bg-zinc-100 rounded transition"
             >
               {link.label}
             </Link>

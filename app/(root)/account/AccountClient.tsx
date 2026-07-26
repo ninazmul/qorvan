@@ -44,7 +44,7 @@ export default function AccountClient() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-      <div className="border-b border-amber-900/10 pb-4">
+      <div className="border-b border-zinc-200 pb-4">
         <h1 className="text-2xl sm:text-3xl font-extrabold font-serif text-gray-900">
           Order Tracking & Customer Portal
         </h1>
@@ -52,8 +52,8 @@ export default function AccountClient() {
       </div>
 
       {/* Track Order Search Card */}
-      <div className="bg-amber-950 text-amber-50 p-6 sm:p-8 rounded-3xl border border-amber-900/50 shadow-xl space-y-4">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-amber-300">
+      <div className="bg-white text-black p-6 sm:p-8 rounded-3xl border border-zinc-200 shadow-xl space-y-4">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-black">
           Look Up Your Order
         </h2>
         <form onSubmit={handleSearchOrder} className="flex flex-col sm:flex-row gap-3">
@@ -63,12 +63,12 @@ export default function AccountClient() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Enter Order # (e.g. QRV-948271) or Phone / Email..."
-            className="flex-1 px-4 py-3 text-xs bg-amber-900/40 border border-amber-800 text-white rounded-xl focus:outline-none focus:border-amber-400 font-mono"
+            className="flex-1 px-4 py-3 text-xs bg-gray-100 border border-zinc-300 text-black rounded-xl focus:outline-none focus:border-zinc-400 font-mono"
           />
           <button
             type="submit"
             disabled={loading}
-            className="px-8 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-extrabold text-xs uppercase tracking-widest rounded-xl transition shadow"
+            className="px-8 py-3 bg-gradient-to-r from-gray-300 to-gray-400 hover:from-gray-200 hover:to-gray-300 text-black font-extrabold text-xs uppercase tracking-widest rounded-xl transition shadow"
           >
             {loading ? "Searching..." : "Track Parcel"}
           </button>
@@ -92,9 +92,9 @@ export default function AccountClient() {
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-4 gap-2">
                   <div>
-                    <h3 className="text-lg font-black text-amber-950 flex items-center gap-2">
+                    <h3 className="text-lg font-black text-black flex items-center gap-2">
                       Order #{ord.orderNumber}
-                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 uppercase">
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-gray-200 text-gray-800 uppercase">
                         {ord.orderStatus}
                       </span>
                     </h3>
@@ -109,14 +109,14 @@ export default function AccountClient() {
                 </div>
 
                 {/* Timeline */}
-                <div className="space-y-3 bg-amber-950/5 p-4 rounded-2xl border border-amber-900/10">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-amber-950 flex items-center gap-1.5">
-                    <Truck className="w-4 h-4 text-amber-800" /> Tracking Progress
+                <div className="space-y-3 bg-gray-50 p-4 rounded-2xl border border-zinc-200">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
+                    <Truck className="w-4 h-4 text-gray-800" /> Tracking Progress
                   </h4>
                   <div className="space-y-2">
                     {ord.trackingHistory?.map((th: any, idx: number) => (
                       <div key={idx} className="flex gap-2 text-xs">
-                        <CheckCircle2 className="w-4 h-4 text-amber-700 mt-0.5 flex-shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-gray-700 mt-0.5 flex-shrink-0" />
                         <div>
                           <span className="font-bold text-gray-900 uppercase">{th.status}: </span>
                           <span className="text-gray-700">{th.note}</span>

@@ -122,7 +122,7 @@ export default async function RootLayout({
 
   const cssVars = `
     :root {
-      --primary: ${setting?.primaryColor || "#D4AF37"};
+      --primary: ${setting?.primaryColor || "#000000"};
       --primary-foreground: ${setting?.primaryForegroundColor || "#FFFFFF"};
     }
   `;

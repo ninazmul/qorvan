@@ -45,7 +45,7 @@ export default function ReturnsPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-8">
       <div className="text-center space-y-2">
-        <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-800">
+        <span className="text-xs font-bold uppercase tracking-[0.25em] text-gray-800">
           Hassle-Free Concierge Support
         </span>
         <h1 className="text-3xl font-extrabold font-serif text-gray-900">
@@ -144,7 +144,7 @@ export default function ReturnsPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-amber-950 text-amber-300 font-extrabold text-xs uppercase tracking-widest rounded-xl hover:bg-amber-900 transition shadow-lg"
+            className="w-full py-4 bg-gray-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-xl hover:bg-gray-900 transition shadow-lg"
           >
             {loading ? "Submitting..." : "Submit Return Request"}
           </button>

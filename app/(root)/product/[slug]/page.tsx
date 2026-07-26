@@ -56,9 +56,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   if (!res.success || !res.data) {
     return (
       <div className="max-w-4xl mx-auto py-20 text-center space-y-4">
-        <h1 className="text-2xl font-bold font-serif text-amber-950">Product Not Found</h1>
+        <h1 className="text-2xl font-bold font-serif text-gray-900">Product Not Found</h1>
         <p className="text-xs text-gray-500">The luxury item you are looking for is unavailable.</p>
-        <Link href="/shop" className="inline-block text-xs font-bold text-amber-800 underline">
+        <Link href="/shop" className="inline-block text-xs font-bold text-gray-800 underline">
           Back to Catalog
         </Link>
       </div>

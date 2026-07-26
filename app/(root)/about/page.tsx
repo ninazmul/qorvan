@@ -8,7 +8,7 @@ export default function AboutPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
       {/* Brand Hero */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
-        <span className="text-xs font-bold uppercase tracking-[0.3em] text-amber-800">
+        <span className="text-xs font-bold uppercase tracking-[0.3em] text-gray-800">
           The Craft of QORVAN
         </span>
         <h1 className="text-4xl sm:text-6xl font-extrabold font-serif text-gray-900 leading-tight">
@@ -26,7 +26,7 @@ export default function AboutPage() {
           alt="QORVAN Atelier Craftsmanship"
           className="w-full h-full object-cover filter contrast-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-amber-950/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent" />
         <div className="absolute bottom-8 left-8 right-8 text-white font-serif">
           <p className="text-xl sm:text-2xl font-bold italic">
             "True luxury lives in the unyielding precision of details."
@@ -37,21 +37,21 @@ export default function AboutPage() {
       {/* 3 Pillars */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm space-y-3">
-          <Crown className="w-8 h-8 text-amber-700" />
+          <Crown className="w-8 h-8 text-gray-700" />
           <h3 className="text-lg font-bold font-serif text-gray-900">Italian Pure Silk</h3>
           <p className="text-xs text-gray-600 leading-relaxed">
             Our ties are woven in silk mills with high thread count density, providing superior drape and rich metallic lustre.
           </p>
         </div>
         <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm space-y-3">
-          <Award className="w-8 h-8 text-amber-700" />
+          <Award className="w-8 h-8 text-gray-700" />
           <h3 className="text-lg font-bold font-serif text-gray-900">Full-Grain Leather</h3>
           <p className="text-xs text-gray-600 leading-relaxed">
             Only hand-selected hides are tanned using organic vegetable extracts to form wallets, belts, and briefcases that age gracefully.
           </p>
         </div>
         <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm space-y-3">
-          <ShieldCheck className="w-8 h-8 text-amber-700" />
+          <ShieldCheck className="w-8 h-8 text-gray-700" />
           <h3 className="text-lg font-bold font-serif text-gray-900">Executive Service</h3>
           <p className="text-xs text-gray-600 leading-relaxed">
             Express nationwide Cash on Delivery service ensured across all 64 districts in Bangladesh with 100% authenticity guarantees.

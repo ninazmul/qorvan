@@ -129,41 +129,41 @@ export default async function HomePage() {
   return (
     <div className="space-y-20 pb-20">
       {/* Hero Banner Section */}
-      <section className="relative bg-amber-950 text-amber-50 overflow-hidden border-b border-amber-900/40">
+      <section className="relative bg-black text-white overflow-hidden border-b border-zinc-200">
         <div className="absolute inset-0 z-0">
           <img
             src={heroImage}
             alt="QORVAN Luxury Fashion"
-            className="w-full h-full object-cover opacity-20 filter contrast-125"
+            className="w-full h-full object-cover opacity-30 filter contrast-125 grayscale"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-amber-950 via-amber-950/90 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-36 flex flex-col justify-center min-h-[600px]">
           <div className="max-w-2xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold uppercase tracking-widest">
-              <Crown className="w-3.5 h-3.5" /> Handcrafted Atelier Collection
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold uppercase tracking-widest backdrop-blur-md">
+              <Crown className="w-3.5 h-3.5 text-white" /> Handcrafted Atelier Collection
             </div>
             <h1 className="text-4xl sm:text-6xl font-extrabold font-serif tracking-tight leading-tight text-white">
               {heroTitle.includes("&") ? heroTitle.split("&")[0].trim() : heroTitle} <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-100">
+              <span className="text-white underline decoration-zinc-500 underline-offset-8">
                 {heroTitle.includes("&") ? `& ${heroTitle.split("&").slice(1).join("&").trim()}` : "Luxury & Elegance"}
               </span>
             </h1>
-            <p className="text-base sm:text-lg text-amber-200/90 font-light leading-relaxed">
+            <p className="text-base sm:text-lg text-zinc-300 font-light leading-relaxed">
               {heroSubtitle}
             </p>
 
             <div className="flex flex-wrap gap-4 pt-4">
               <Link
                 href={heroButtonUrl}
-                className="px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 text-amber-950 font-bold text-xs uppercase tracking-widest rounded-lg hover:from-amber-400 hover:to-amber-500 transition shadow-xl flex items-center gap-2"
+                className="px-8 py-4 bg-white text-black font-extrabold text-xs uppercase tracking-widest rounded-lg hover:bg-zinc-200 transition shadow-xl flex items-center gap-2"
               >
-                {heroButtonText} <ArrowRight className="w-4 h-4" />
+                {heroButtonText} <ArrowRight className="w-4 h-4 text-black" />
               </Link>
               <Link
                 href="/about"
-                className="px-8 py-4 border border-amber-700/80 text-amber-200 font-bold text-xs uppercase tracking-widest rounded-lg hover:bg-amber-900/40 transition"
+                className="px-8 py-4 border border-zinc-700 text-white font-extrabold text-xs uppercase tracking-widest rounded-lg hover:bg-white/10 transition"
               >
                 Discover Craftsmanship
               </Link>
@@ -175,13 +175,13 @@ export default async function HomePage() {
       {/* Featured Categories Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center max-w-xl mx-auto space-y-2">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-700">
+          <span className="text-xs font-extrabold uppercase tracking-[0.25em] text-zinc-500">
             Curated Categories
           </span>
-          <h2 className="text-3xl font-bold font-serif text-gray-900">
+          <h2 className="text-3xl font-extrabold font-serif text-black">
             Signature Products
           </h2>
-          <div className="w-12 h-0.5 bg-amber-600 mx-auto" />
+          <div className="w-12 h-0.5 bg-black mx-auto" />
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -189,16 +189,16 @@ export default async function HomePage() {
             <Link
               key={cat.slug}
               href={`/shop?category=${cat.slug}`}
-              className="group relative rounded-2xl overflow-hidden aspect-[3/4] border border-amber-900/10 shadow-sm hover:shadow-xl transition"
+              className="group relative rounded-2xl overflow-hidden aspect-[3/4] border border-zinc-200 shadow-sm hover:shadow-xl hover:border-black transition"
             >
               <img
                 src={cat.image || "https://images.unsplash.com/photo-1589756823695-278bc923f962?w=800"}
                 alt={cat.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-amber-950 via-amber-950/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
               <div className="absolute bottom-4 left-3 right-3 text-center">
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider group-hover:text-amber-300 transition">
+                <h3 className="text-xs font-extrabold text-white uppercase tracking-wider group-hover:text-zinc-300 transition">
                   {cat.name}
                 </h3>
               </div>
@@ -209,18 +209,18 @@ export default async function HomePage() {
 
       {/* Featured Luxury Products Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b pb-4 border-amber-900/10">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b pb-4 border-zinc-200">
           <div>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-700">
+            <span className="text-xs font-extrabold uppercase tracking-[0.25em] text-zinc-500">
               QORVAN Essentials
             </span>
-            <h2 className="text-3xl font-bold font-serif text-gray-900 mt-1">
+            <h2 className="text-3xl font-extrabold font-serif text-black mt-1">
               Featured Luxury Products
             </h2>
           </div>
           <Link
             href="/shop"
-            className="text-xs font-bold uppercase tracking-widest text-amber-800 hover:text-amber-950 inline-flex items-center gap-1 mt-2 sm:mt-0"
+            className="text-xs font-extrabold uppercase tracking-widest text-black hover:underline inline-flex items-center gap-1 mt-2 sm:mt-0"
           >
             View Entire Catalog <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -234,42 +234,42 @@ export default async function HomePage() {
       </section>
 
       {/* Heritage & Brand Story Section */}
-      <section className="bg-amber-950 text-amber-100 py-20 border-y border-amber-900/50 relative overflow-hidden">
+      <section className="bg-black text-white py-20 border-y border-zinc-800 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <span className="text-xs font-bold uppercase tracking-[0.3em] text-amber-400">
+            <span className="text-xs font-extrabold uppercase tracking-[0.3em] text-zinc-400">
               The Atelier Legacy
             </span>
             <h2 className="text-3xl sm:text-5xl font-extrabold font-serif text-white leading-tight">
               Uncompromising Quality & Handcrafted Luxury
             </h2>
-            <p className="text-sm text-amber-200/80 leading-relaxed font-light">
+            <p className="text-sm text-zinc-300 leading-relaxed font-light">
               Every QORVAN piece represents hours of dedicated craftsmanship by master artisans. From selecting full-grain leathers to sourcing 100% pure silk and Egyptian long-staple cotton, our commitment to perfection defines executive luxury.
             </p>
 
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-amber-900/60">
+            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-zinc-800">
               <div>
-                <div className="text-2xl font-bold text-amber-400 font-serif">100%</div>
-                <div className="text-[11px] text-amber-300 uppercase tracking-wider">Full-Grain Leather</div>
+                <div className="text-2xl font-bold text-white font-serif">100%</div>
+                <div className="text-[11px] text-zinc-400 uppercase tracking-wider">Full-Grain Leather</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-amber-400 font-serif">Pure</div>
-                <div className="text-[11px] text-amber-300 uppercase tracking-wider">Italian Silk</div>
+                <div className="text-2xl font-bold text-white font-serif">Pure</div>
+                <div className="text-[11px] text-zinc-400 uppercase tracking-wider">Italian Silk</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-amber-400 font-serif">COD</div>
-                <div className="text-[11px] text-amber-300 uppercase tracking-wider">All Bangladesh</div>
+                <div className="text-2xl font-bold text-white font-serif">COD</div>
+                <div className="text-[11px] text-zinc-400 uppercase tracking-wider">All Bangladesh</div>
               </div>
             </div>
           </div>
 
-          <div className="relative aspect-square rounded-2xl overflow-hidden border border-amber-800/40 shadow-2xl">
+          <div className="relative aspect-square rounded-2xl overflow-hidden border border-zinc-800 shadow-2xl">
             <img
               src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=1000"
               alt="Craftsmanship QORVAN"
-              className="w-full h-full object-cover filter contrast-110"
+              className="w-full h-full object-cover filter contrast-110 grayscale"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-amber-950/80 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
           </div>
         </div>
       </section>
@@ -277,10 +277,10 @@ export default async function HomePage() {
       {/* Customer Testimonials Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="text-center max-w-xl mx-auto space-y-2">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-700">
+          <span className="text-xs font-extrabold uppercase tracking-[0.25em] text-zinc-500">
             Client Reflections
           </span>
-          <h2 className="text-3xl font-bold font-serif text-gray-900">
+          <h2 className="text-3xl font-bold font-serif text-black">
             Endorsed by Executives
           </h2>
         </div>
@@ -303,16 +303,16 @@ export default async function HomePage() {
               title: "Fashion Curator, Sylhet",
             },
           ].map((t, idx) => (
-            <div key={idx} className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-              <div className="flex text-amber-500 gap-1">
+            <div key={idx} className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm space-y-4 hover:border-black transition">
+              <div className="flex text-black gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-amber-500" />
+                  <Star key={i} className="w-4 h-4 fill-black text-black" />
                 ))}
               </div>
-              <p className="text-xs text-gray-700 italic leading-relaxed">"{t.quote}"</p>
-              <div className="border-t pt-3">
-                <h4 className="text-xs font-bold text-gray-900">{t.name}</h4>
-                <p className="text-[10px] text-amber-800 font-semibold">{t.title}</p>
+              <p className="text-xs text-zinc-700 italic leading-relaxed">"{t.quote}"</p>
+              <div className="border-t border-zinc-200 pt-3">
+                <h4 className="text-xs font-extrabold text-black">{t.name}</h4>
+                <p className="text-[10px] text-zinc-500 font-semibold">{t.title}</p>
               </div>
             </div>
           ))}

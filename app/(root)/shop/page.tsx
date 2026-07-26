@@ -30,15 +30,15 @@ export default async function ShopPage({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
       {/* Top Banner Header */}
-      <div className="bg-amber-950 text-amber-50 p-8 sm:p-12 rounded-3xl border border-amber-900/50 relative overflow-hidden shadow-xl">
+      <div className="bg-white text-black p-8 sm:p-12 rounded-3xl border border-gray-200 relative overflow-hidden shadow-xl">
         <div className="relative z-10 max-w-xl space-y-3">
-          <span className="text-xs font-bold uppercase tracking-[0.3em] text-amber-400">
+          <span className="text-xs font-bold uppercase tracking-[0.3em] text-gray-600">
             QORVAN Luxury Collection
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold font-serif">
             {params.category ? params.category.replace("-", " ").toUpperCase() : "Catalog Overview"}
           </h1>
-          <p className="text-xs sm:text-sm text-amber-200/80 leading-relaxed">
+          <p className="text-xs sm:text-sm text-gray-600/80 leading-relaxed">
             Handcrafted luxury ties, wallets, belts, bags, formal shirts, and abayas tailored to perfection.
           </p>
         </div>
@@ -48,8 +48,8 @@ export default async function ShopPage({
         {/* Sidebar Filters */}
         <div className="space-y-6">
           <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-950 border-b pb-2 flex items-center gap-2">
-              <Filter className="w-4 h-4 text-amber-700" /> Categories
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900 border-b pb-2 flex items-center gap-2">
+              <Filter className="w-4 h-4 text-gray-700" /> Categories
             </h3>
 
             <ul className="space-y-2 text-xs font-medium">
@@ -57,7 +57,7 @@ export default async function ShopPage({
                 <Link
                   href="/shop"
                   className={`block py-1 px-2 rounded ${
-                    !params.category ? "bg-amber-950 text-amber-300 font-bold" : "text-gray-700 hover:text-amber-800"
+                    !params.category ? "bg-gray-200 text-black font-bold" : "text-gray-700 hover:text-gray-800"
                   }`}
                 >
                   All Products
@@ -69,8 +69,8 @@ export default async function ShopPage({
                     href={`/shop?category=${c.slug}`}
                     className={`block py-1 px-2 rounded ${
                       params.category === c.slug
-                        ? "bg-amber-950 text-amber-300 font-bold"
-                        : "text-gray-700 hover:text-amber-800"
+                        ? "bg-gray-200 text-black font-bold"
+                        : "text-gray-700 hover:text-gray-800"
                     }`}
                   >
                     {c.name}
@@ -102,7 +102,7 @@ export default async function ShopPage({
           {products.length === 0 ? (
             <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-300 space-y-3">
               <p className="text-sm font-bold text-gray-700">No products found in this category.</p>
-              <Link href="/shop" className="inline-block text-xs font-bold text-amber-800 underline">
+              <Link href="/shop" className="inline-block text-xs font-bold text-gray-800 underline">
                 Reset Filter
               </Link>
             </div>

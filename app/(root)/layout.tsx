@@ -11,7 +11,7 @@ export default async function PublicLayout({
 }) {
   return (
     <CartProvider>
-      <div className="min-h-screen flex flex-col bg-amber-950/5">
+      <div className="min-h-screen flex flex-col bg-white text-black">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
