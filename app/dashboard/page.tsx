@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { requireDashboardAccess } from "@/lib/auth/rbac";
+import { canAccessModule } from "@/lib/auth/rbac-rules";
 import { getDashboardStats } from "@/lib/actions/analytics.actions";
+import SalesChart from "@/components/dashboard/SalesChart";
 import {
   DollarSign, ShoppingCart, ShoppingBag, Users, AlertTriangle,
   ArrowRight, Plus, Truck, Package, Layers, Sparkles, LayoutDashboard
@@ -18,6 +20,8 @@ function formatCurrency(amount: number) {
 
 export default async function DashboardOverviewPage() {
   const access = await requireDashboardAccess("/");
+
+
   const statsRes = await getDashboardStats();
 
   const stats = statsRes.success && statsRes.data ? statsRes.data : {
@@ -80,16 +84,16 @@ export default async function DashboardOverviewPage() {
   ];
 
   const quickActions = [
-    { label: "Add Product", href: "/dashboard/products", icon: Plus },
-    { label: "View Orders", href: "/dashboard/orders", icon: ShoppingCart },
-    { label: "Inventory Control", href: "/dashboard/inventory", icon: Package },
-    { label: "Delivery Charges", href: "/dashboard/delivery-zones", icon: Truck },
-    { label: "Categories", href: "/dashboard/categories", icon: Layers },
-    { label: "Collections", href: "/dashboard/collections", icon: Sparkles },
-  ];
+    { label: "Add Product", href: "/dashboard/products", icon: Plus, module: "products" },
+    { label: "View Orders", href: "/dashboard/orders", icon: ShoppingCart, module: "orders" },
+    { label: "Inventory Control", href: "/dashboard/inventory", icon: Package, module: "inventory" },
+    { label: "Delivery Charges", href: "/dashboard/delivery-zones", icon: Truck, module: "delivery-zones" },
+    { label: "Categories", href: "/dashboard/categories", icon: Layers, module: "categories" },
+    { label: "Collections", href: "/dashboard/collections", icon: Sparkles, module: "collections" },
+  ] as const;
 
   return (
-    <div className="space-y-8 pb-10">
+    <div className="space-y-8 pb-10 bg-gradient-to-br from-amber-50 via-white to-emerald-50 p-6 rounded-xl shadow-lg">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-5">
         <div>
@@ -106,19 +110,20 @@ export default async function DashboardOverviewPage() {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {quickActions.slice(0, 3).map((act) => {
-            const Icon = act.icon;
-            return (
-              <Link
-                key={act.href}
-                href={act.href}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-md border border-gray-200 bg-white text-gray-700 hover:border-amber-500 hover:text-amber-900 transition shadow-sm"
-              >
-                <Icon className="w-3.5 h-3.5" />
-                {act.label}
-              </Link>
-            );
-          })}
+          {quickActions.filter((act) => canAccessModule(access, act.module)).map((act) => {
+                const Icon = act.icon;
+                return (
+                  <Link
+                    key={act.href}
+                    href={act.href}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md border border-gray-200 bg-white text-gray-700 hover:border-amber-500 hover:text-amber-900 transition shadow-sm backdrop-blur-sm bg-white/70"
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    {act.label}
+                  </Link>
+                );
+              })}
+
         </div>
       </div>
 
@@ -153,7 +158,7 @@ export default async function DashboardOverviewPage() {
       </div>
 
       {/* Quick Action Navigation Grid */}
-      <div className="bg-amber-950/5 border border-amber-900/10 rounded-xl p-5">
+      <div className="bg-amber-950/5 border border-amber-900/10 rounded-xl p-5 backdrop-filter backdrop-blur-lg bg-white/30">
         <h2 className="text-sm font-bold uppercase tracking-wider text-amber-950 mb-3">
           Management Quick Actions
         </h2>
@@ -194,7 +199,7 @@ export default async function DashboardOverviewPage() {
         </div>
 
         {stats.recentOrders.length === 0 ? (
-          <div className="text-center py-10 border border-dashed rounded-lg">
+          <div className="text-center py-10 border border-dashed rounded-lg bg-white/50 backdrop-blur-sm">
             <ShoppingCart className="w-10 h-10 text-gray-300 mx-auto mb-2" />
             <p className="text-sm text-gray-500 font-medium">No orders recorded yet.</p>
             <p className="text-xs text-gray-400 mt-1">Orders placed by customers will appear here automatically.</p>
@@ -250,6 +255,7 @@ export default async function DashboardOverviewPage() {
             </table>
           </div>
         )}
+        <SalesChart data={stats.chartData} />
       </div>
     </div>
   );

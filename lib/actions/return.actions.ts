@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "@/lib/database";
 import ReturnRequest from "@/lib/database/models/returnRequest.model";
 import { requirePermission } from "@/lib/auth/rbac";
+import { sendSystemNotificationEmail } from "@/lib/mailer/sendSystemNotificationEmail";
 
 export async function createReturnRequest(params: {
   orderNumber: string;
@@ -17,6 +18,10 @@ export async function createReturnRequest(params: {
     await connectToDatabase();
     const returnReq = await ReturnRequest.create(params);
     revalidatePath("/dashboard/return-requests");
+    await sendSystemNotificationEmail({
+      subject: `New Return Request for Order ${params.orderNumber}`,
+      message: `Customer ${params.customerName} (${params.customerEmail}) requested a return. Reason: ${params.reason}`,
+    });
     return { success: true, data: JSON.parse(JSON.stringify(returnReq)) };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to submit return request" };

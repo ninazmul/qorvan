@@ -128,7 +128,7 @@ export default async function RootLayout({
   `;
 
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <style dangerouslySetInnerHTML={{ __html: cssVars }} />
       <body
         className={`${inter.variable} ${dmSerif.variable} ${solaimanLipi.variable} font-sans`}

@@ -5,7 +5,7 @@ import { connectToDatabase } from "@/lib/database";
 import ContactMessage from "@/lib/database/models/contactMessage.model";
 import { requirePermission } from "@/lib/auth/rbac";
 
-import { sendAdminNotification } from "@/lib/mailer/sendSystemNotificationEmail";
+import { sendSystemNotificationEmail } from "@/lib/mailer/sendSystemNotificationEmail";
 
 export async function submitContactMessage(params: {
   name: string;
@@ -21,16 +21,9 @@ export async function submitContactMessage(params: {
     revalidatePath("/dashboard/contact-messages");
 
     // Trigger async admin notification email to CONTACT_RECEIVER
-    sendAdminNotification({
-      title: "New Contact Message Received",
-      subject: `New Message from ${params.name}`,
-      details: {
-        "Sender Name": params.name,
-        "Email Address": params.email,
-        "Phone Number": params.phone,
-        Subject: params.subject,
-        Message: params.message,
-      },
+    await sendSystemNotificationEmail({
+      subject: `New Contact Message from ${params.name}`,
+      message: `Sender: ${params.name}\nEmail: ${params.email}\nPhone: ${params.phone || 'N/A'}\nSubject: ${params.subject || 'N/A'}\nMessage: ${params.message}`,
     }).catch((err) => console.error("Email send error:", err));
 
     return { success: true, data: JSON.parse(JSON.stringify(newMessage)) };

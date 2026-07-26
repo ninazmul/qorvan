@@ -7,6 +7,7 @@ import Category from "@/lib/database/models/category.model";
 import Collection from "@/lib/database/models/collection.model";
 import Brand from "@/lib/database/models/brand.model";
 import { requirePermission } from "@/lib/auth/rbac";
+import { sendSystemNotificationEmail } from "@/lib/mailer/sendSystemNotificationEmail";
 
 export async function getProducts(params?: {
   query?: string;

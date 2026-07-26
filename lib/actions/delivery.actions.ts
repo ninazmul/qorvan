@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { connectToDatabase } from "@/lib/database";
 import DeliveryZone from "@/lib/database/models/deliveryZone.model";
 import { requirePermission } from "@/lib/auth/rbac";
+import { sendSystemNotificationEmail } from "@/lib/mailer/sendSystemNotificationEmail";
 
 export async function getDeliveryZones() {
   try {
@@ -96,6 +97,11 @@ export async function createDeliveryZone(params: {
     const zone = await DeliveryZone.create(params);
     revalidatePath("/dashboard/delivery-zones");
     revalidatePath("/checkout");
+    // Notify admin of new delivery zone
+    await sendSystemNotificationEmail({
+      subject: "New Delivery Zone Created",
+      message: `Delivery zone "${params.name}" has been created with base charge ${params.baseCharge}.`,
+    });
     return { success: true, data: JSON.parse(JSON.stringify(zone)) };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to create delivery zone" };
@@ -109,6 +115,11 @@ export async function updateDeliveryZone(id: string, params: any) {
     const updated = await DeliveryZone.findByIdAndUpdate(id, params, { new: true });
     revalidatePath("/dashboard/delivery-zones");
     revalidatePath("/checkout");
+    // Notify admin of delivery zone update
+    await sendSystemNotificationEmail({
+      subject: "Delivery Zone Updated",
+      message: `Delivery zone "${updated?.name || 'unknown'}" has been updated.`,
+    });
     return { success: true, data: JSON.parse(JSON.stringify(updated)) };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to update delivery zone" };
@@ -122,6 +133,11 @@ export async function deleteDeliveryZone(id: string) {
     await DeliveryZone.findByIdAndDelete(id);
     revalidatePath("/dashboard/delivery-zones");
     revalidatePath("/checkout");
+    // Notify admin of delivery zone deletion
+    await sendSystemNotificationEmail({
+      subject: "Delivery Zone Deleted",
+      message: `Delivery zone with ID ${id} has been deleted.`,
+    });
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to delete delivery zone" };

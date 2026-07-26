@@ -1,8 +1,27 @@
+'use client';
+
 import Link from "next/link";
 import { ShieldCheck, Truck, RotateCcw, Headphones, Lock } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const handleSubscribe = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+    await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+    toast.success('Subscribed successfully!');
+    setEmail('');
+  };
   return (
     <footer className="bg-white text-black border-t border-zinc-200 pt-16 pb-12 font-sans">
       {/* Guarantees Strip */}
@@ -104,10 +123,13 @@ export default function Footer() {
             <input
               type="email"
               placeholder="Enter your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-3 py-2 text-xs bg-white border border-zinc-300 text-black placeholder-zinc-400 rounded focus:outline-none focus:border-black"
             />
             <button
               type="button"
+              onClick={handleSubscribe}
               className="w-full py-2 bg-black text-white font-bold text-xs uppercase tracking-widest rounded hover:bg-zinc-800 transition"
             >
               Subscribe

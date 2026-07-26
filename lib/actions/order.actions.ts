@@ -7,6 +7,7 @@ import Product from "@/lib/database/models/product.model";
 import Coupon from "@/lib/database/models/coupon.model";
 import User from "@/lib/database/models/user.model";
 import { requirePermission } from "@/lib/auth/rbac";
+import { sendSystemNotificationEmail } from "@/lib/mailer/sendSystemNotificationEmail";
 
 export async function createOrder(params: {
   customerDbUserId?: string;
@@ -100,6 +101,10 @@ export async function createOrder(params: {
     revalidatePath("/dashboard/orders");
     revalidatePath("/dashboard/inventory");
     revalidatePath("/account");
+    await sendSystemNotificationEmail({
+      subject: "🛒 New Order Placed",
+      message: `Order #${orderNumber} placed. Total: ${totalAmount}.`,
+    });
 
     return {
       success: true,
@@ -238,6 +243,12 @@ export async function updateOrderStatus(
     });
 
     await order.save();
+if (["shipped", "delivered", "cancelled", "returned"].includes(newStatus)) {
+  await sendSystemNotificationEmail({
+    subject: `Order ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
+    message: `Order #${order.orderNumber} status changed to ${newStatus}.`,
+  });
+}
 
     revalidatePath("/dashboard/orders");
     revalidatePath(`/dashboard/orders/${orderId}`);

@@ -137,3 +137,27 @@ export async function requirePermission(
 
   return access;
 }
+
+/**
+ * Checks multiple permissions in sequence. Throws if any are missing.
+ * Accepts an array of [module, action] tuples.
+ */
+export async function requirePermissions(
+  permissions: Array<[CmsModule, CmsAction]>,
+): Promise<DashboardAccess> {
+  const access = await requireDashboardAccess("/");
+  for (const [module, action] of permissions) {
+    if (!hasPermission(access, module, action)) {
+      throw new Error(
+        `Forbidden: You lack the "${action}" permission on "${module}".`,
+      );
+    }
+  }
+  return access;
+}
+
+export async function hasAccess(module: CmsModule, action: CmsAction): Promise<boolean> {
+  const access = await getCurrentDashboardAccess();
+  if (!access) return false;
+  return hasPermission(access, module, action);
+}

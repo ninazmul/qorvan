@@ -4,10 +4,13 @@ import InventoryClient from "./InventoryClient";
 
 export const dynamic = "force-dynamic";
 
-export default async function InventoryPage() {
+export default async function InventoryPage(props: any) {
+  const { searchParams } = props;
   await requirePermission("inventory", "read");
-  const res = await getProducts({ limit: 150, status: "all" });
+  const page = typeof searchParams?.page === "string" ? parseInt(searchParams.page) : 1;
+  const res = await getProducts({ limit: 20, page, status: "all" });
   const products = res.success ? res.data : [];
 
-  return <InventoryClient initialProducts={products} />;
+  return <InventoryClient initialProducts={products} currentPage={page} />;
 }
+

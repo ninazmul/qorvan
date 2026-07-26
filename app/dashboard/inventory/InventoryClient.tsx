@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, Search, Save } from "lucide-react";
+import { AlertTriangle, Search, Save, ArrowLeft, ArrowRight, Download } from "lucide-react";
 import { updateInventoryStock } from "@/lib/actions/product.actions";
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
-export default function InventoryClient({ initialProducts }: { initialProducts: any[] }) {
+export default function InventoryClient({ initialProducts, currentPage }: { initialProducts: any[]; currentPage?: number }) {
   const [products, setProducts] = useState(initialProducts);
   const [searchTerm, setSearchTerm] = useState("");
   const [stockEdits, setStockEdits] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState<Record<string, boolean>>({});
+  const router = useRouter();
+  const page = currentPage ?? 1;
 
   const lowStockCount = products.filter((p) => p.stock <= (p.lowStockThreshold || 5)).length;
 
@@ -43,10 +46,29 @@ export default function InventoryClient({ initialProducts }: { initialProducts: 
   };
 
   const filtered = products.filter(
-    (p) =>
-      p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.sku.toLowerCase().includes(searchTerm.toLowerCase())
+    (p) => p.title.toLowerCase().includes(searchTerm.toLowerCase()) || p.sku.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const goToPage = (newPage: number) => {
+    router.push(`/dashboard/inventory?page=${newPage}`);
+  };
+
+  const exportCsv = async () => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.append("search", searchTerm);
+    const resp = await fetch(`/api/inventory/export?${params.toString()}`);
+    if (!resp.ok) {
+      toast.error("Failed to export CSV");
+      return;
+    }
+    const blob = await resp.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "inventory.csv";
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="space-y-6 pb-10">
@@ -72,6 +94,9 @@ export default function InventoryClient({ initialProducts }: { initialProducts: 
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full text-xs outline-none"
         />
+        <button onClick={exportCsv} className="ml-2 flex items-center gap-1 text-xs bg-blue-600 text-white px-2 py-1 rounded">
+          <Download className="w-3 h-3" /> Export CSV
+        </button>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
@@ -133,6 +158,23 @@ export default function InventoryClient({ initialProducts }: { initialProducts: 
             })}
           </tbody>
         </table>
+      </div>
+
+      <div className="flex justify-end gap-2 mt-4">
+        <button
+          onClick={() => goToPage(page - 1)}
+          disabled={page <= 1}
+          className="flex items-center gap-1 px-3 py-1 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
+        >
+          <ArrowLeft className="w-4 h-4" /> Prev
+        </button>
+        <span className="px-3 py-1">Page {page}</span>
+        <button
+          onClick={() => goToPage(page + 1)}
+          className="flex items-center gap-1 px-3 py-1 bg-gray-200 text-gray-700 rounded"
+        >
+          Next <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );

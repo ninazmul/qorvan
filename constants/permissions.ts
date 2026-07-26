@@ -83,3 +83,9 @@ export const MODULE_ROUTES: Record<CmsModule, string> = {
   settings: "/dashboard/settings",
   users: "/dashboard/users",
 };
+
+export const DASHBOARD_INVENTORY_VIEW = "dashboard:inventory:read";
+export const DASHBOARD_INVENTORY_UPDATE = "dashboard:inventory:update";
+export const DASHBOARD_EMAIL_SEND = "dashboard:email:create";
+export const DASHBOARD_ORDERS_VIEW = "dashboard:orders:read";
+export const DASHBOARD_SETTINGS_MANAGE = "dashboard:settings:update";
