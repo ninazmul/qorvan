@@ -105,9 +105,9 @@ export default function Footer() {
           <ul className="space-y-2.5 text-xs text-zinc-600 font-medium">
             <li><Link href="/account" className="hover:text-black transition">Track Your Order</Link></li>
             <li><Link href="/returns" className="hover:text-black transition">Returns & Exchange</Link></li>
-            <li><Link href="/faq" className="hover:text-black transition">Frequently Asked Questions</Link></li>
             <li><Link href="/contact" className="hover:text-black transition">Contact Concierge</Link></li>
             <li><Link href="/about" className="hover:text-black transition">Our Craftsmanship Story</Link></li>
+            <li><Link href="/blog" className="hover:text-black transition">Journal &amp; Stories</Link></li>
           </ul>
         </div>
 
@@ -139,9 +139,23 @@ export default function Footer() {
       </div>
 
       {/* Bottom Copyright Strip */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-zinc-500 font-medium">
-        <p>© {new Date().getFullYear()} <a href="/dashboard" target="_blank" className="hover:underline hover:text-black">QORVAN</a> Luxury Brand. All Rights Reserved.</p>
-        <div className="flex items-center space-x-4 mt-3 sm:mt-0">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col md:flex-row items-center justify-between text-[11px] text-zinc-500 font-medium gap-2">
+        <p>
+          © {new Date().getFullYear()} <a href="/dashboard" target="_blank" className="hover:underline hover:text-black">QORVAN</a> Luxury Brand. All Rights Reserved.
+          <span className="hidden sm:inline"> | </span>
+          <span className="block sm:inline mt-1 sm:mt-0">
+            Developed by{" "}
+            <a
+              href="https://www.artistycode.studio/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:underline hover:text-black font-semibold"
+            >
+              ArtistyCode Studio
+            </a>
+          </span>
+        </p>
+        <div className="flex items-center space-x-4 mt-3 md:mt-0">
           <span className="hover:text-black transition cursor-pointer">Terms of Service</span>
           <span className="hover:text-black transition cursor-pointer">Privacy Policy</span>
           <span className="hover:text-black transition cursor-pointer">Security</span>
