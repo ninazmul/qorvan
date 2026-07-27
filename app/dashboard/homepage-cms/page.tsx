@@ -13,7 +13,7 @@ export default async function HomepageCmsPage() {
   ]);
 
   const slides = heroRes.success ? heroRes.data : [];
-  const customPages = pagesRes.success ? pagesRes.data : {};
+  const customPages: Record<string, any> = pagesRes.success ? pagesRes.data ?? {} : {};
 
   return <HomepageCmsClient initialSlides={slides} initialCustomPages={customPages} />;
 }

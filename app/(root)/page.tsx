@@ -2,21 +2,27 @@ import Link from "next/link";
 import { getProducts } from "@/lib/actions/product.actions";
 import { getCategories } from "@/lib/actions/category.actions";
 import { getHeroSlides } from "@/lib/actions/hero.actions";
+import { getApprovedReviews, getProductsForReview } from "@/lib/actions/review.actions";
 import ProductCard from "@/components/storefront/ProductCard";
+import TestimonialsSection from "@/components/storefront/TestimonialsSection";
 import { ShieldCheck, ArrowRight, Sparkles, Star, Award, Crown, Truck } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [productsRes, categoriesRes, heroSlidesRes] = await Promise.all([
+  const [productsRes, categoriesRes, heroSlidesRes, reviewsRes, reviewProductsRes] = await Promise.all([
     getProducts({ limit: 12 }),
     getCategories(),
     getHeroSlides({ enabled: true }),
+    getApprovedReviews(12),
+    getProductsForReview(),
   ]);
 
   let products = productsRes.success ? productsRes.data : [];
   let categories = categoriesRes.success ? categoriesRes.data : [];
   const heroSlide = heroSlidesRes.success && heroSlidesRes.data?.length ? heroSlidesRes.data[0] : null;
+  const approvedReviews = reviewsRes.success ? reviewsRes.data : [];
+  const reviewProducts = reviewProductsRes.success ? reviewProductsRes.data : [];
   const heroTitle = heroSlide?.title || "The Pinnacle of Luxury & Elegance";
   const heroSubtitle =
     heroSlide?.subtitle ||
@@ -274,50 +280,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Customer Testimonials Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="text-center max-w-xl mx-auto space-y-2">
-          <span className="text-xs font-extrabold uppercase tracking-[0.25em] text-zinc-500">
-            Client Reflections
-          </span>
-          <h2 className="text-3xl font-bold font-serif text-black">
-            Endorsed by Executives
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              quote: "The silk tie set and briefcase leather quality surpassed my highest expectations. Arrived in Dhaka within 24 hours via Cash on Delivery.",
-              name: "Tariqul Islam",
-              title: "Managing Director, Dhaka",
-            },
-            {
-              quote: "QORVAN's leather wallet and belt craftsmanship match luxury European fashion houses. Impeccable attention to detail.",
-              name: "Rahim Chowdhury",
-              title: "Senior Partner, Chittagong",
-            },
-            {
-              quote: "The royal abaya material and velvet finish are breathtaking. Fast delivery and extremely courteous concierge service.",
-              name: "Nusrat Jahan",
-              title: "Fashion Curator, Sylhet",
-            },
-          ].map((t, idx) => (
-            <div key={idx} className="bg-white p-6 rounded-2xl border border-zinc-200 shadow-sm space-y-4 hover:border-black transition">
-              <div className="flex text-black gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-black text-black" />
-                ))}
-              </div>
-              <p className="text-xs text-zinc-700 italic leading-relaxed">"{t.quote}"</p>
-              <div className="border-t border-zinc-200 pt-3">
-                <h4 className="text-xs font-extrabold text-black">{t.name}</h4>
-                <p className="text-[10px] text-zinc-500 font-semibold">{t.title}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Customer Testimonials + Review Form */}
+      <TestimonialsSection reviews={approvedReviews} products={reviewProducts} />
     </div>
   );
 }
