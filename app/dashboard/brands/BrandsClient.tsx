@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Award, Plus, Pencil, Trash2, X, Loader2 } from "lucide-react";
 import { createBrand, updateBrand, deleteBrand } from "@/lib/actions/brand.actions";
 import toast from "react-hot-toast";
+import ImageUploader from "@/components/shared/ImageUploader";
 
 interface Brand {
   _id: string;
@@ -106,7 +107,7 @@ export default function BrandsClient({ initialBrands }: { initialBrands: Brand[]
         </div>
         <button
           onClick={openCreate}
-          className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-amber-700 transition"
+          className="flex items-center gap-2 px-4 py-2 bg-black text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-gray-800 transition"
         >
           <Plus className="w-4 h-4" /> Add Brand
         </button>
@@ -134,8 +135,8 @@ export default function BrandsClient({ initialBrands }: { initialBrands: Brand[]
                       className="w-10 h-10 rounded-lg object-cover border"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                      <Award className="w-5 h-5 text-amber-600" />
+                    <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <Award className="w-5 h-5 text-black" />
                     </div>
                   )}
                   <div>
@@ -146,7 +147,7 @@ export default function BrandsClient({ initialBrands }: { initialBrands: Brand[]
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
                   <button
                     onClick={() => openEdit(brand)}
-                    className="p-1.5 rounded-lg hover:bg-amber-50 text-amber-600"
+                    className="p-1.5 rounded-lg hover:bg-gray-200 text-black"
                   >
                     <Pencil className="w-3.5 h-3.5" />
                   </button>
@@ -190,7 +191,7 @@ export default function BrandsClient({ initialBrands }: { initialBrands: Brand[]
                   value={name}
                   onChange={(e) => handleNameChange(e.target.value)}
                   placeholder="e.g. QORVAN"
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black"
                   required
                 />
               </div>
@@ -200,20 +201,15 @@ export default function BrandsClient({ initialBrands }: { initialBrands: Brand[]
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
                   placeholder="brand-slug"
-                  className="w-full px-3 py-2 border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  className="w-full px-3 py-2 border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-black"
                 />
               </div>
-              <div>
-                <label className="text-xs font-semibold text-gray-600 block mb-1">
-                  Logo URL
-                </label>
-                <input
-                  value={logo}
-                  onChange={(e) => setLogo(e.target.value)}
-                  placeholder="https://..."
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
+              <ImageUploader
+                label="Logo Image"
+                value={logo}
+                onChange={(url) => setLogo(url)}
+                placeholder="https://... or upload from library"
+              />
               <div>
                 <label className="text-xs font-semibold text-gray-600 block mb-1">
                   Description
@@ -222,13 +218,13 @@ export default function BrandsClient({ initialBrands }: { initialBrands: Brand[]
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
+                  className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black resize-none"
                 />
               </div>
               <button
                 type="submit"
                 disabled={isPending}
-                className="w-full py-2.5 bg-amber-600 text-white font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-amber-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-black text-white font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-gray-800 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {isPending && <Loader2 className="w-4 h-4 animate-spin" />}
                 {editingBrand ? "Update Brand" : "Create Brand"}

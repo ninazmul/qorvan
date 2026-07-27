@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus, Trash2, Edit2, Layers, Image as ImageIcon } from "lucide-react";
 import { createCategory, updateCategory, deleteCategory } from "@/lib/actions/category.actions";
 import { toast } from "react-hot-toast";
+import ImageUploader from "@/components/shared/ImageUploader";
 
 export default function CategoriesClient({ initialCategories }: { initialCategories: any[] }) {
   const [categories, setCategories] = useState(initialCategories);
@@ -105,16 +106,12 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
                 className="w-full p-2 border rounded-md font-mono"
               />
             </div>
-            <div>
-              <label className="font-semibold block mb-1">Banner Image URL</label>
-              <input
-                type="text"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-                placeholder="https://..."
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
+            <ImageUploader
+              label="Banner Image"
+              value={image}
+              onChange={(url) => setImage(url)}
+              placeholder="https://... or upload from library"
+            />
             <div>
               <label className="font-semibold block mb-1">Description</label>
               <textarea
@@ -127,7 +124,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
             <div className="flex gap-2 pt-2">
               <button
                 type="submit"
-                className="flex-1 py-2 bg-amber-900 text-amber-300 font-bold rounded-md hover:bg-amber-950 transition"
+                className="flex-1 py-2 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition"
               >
                 {editingId ? "Update" : "Create Category"}
               </button>
@@ -167,7 +164,7 @@ export default function CategoriesClient({ initialCategories }: { initialCategor
                   </td>
                   <td className="py-3 px-4 font-mono text-gray-500">{c.slug}</td>
                   <td className="py-3 px-4 text-right space-x-2">
-                    <button onClick={() => handleEdit(c)} className="text-gray-600 hover:text-amber-800">
+                    <button onClick={() => handleEdit(c)} className="text-gray-600 hover:text-gray-900">
                       <Edit2 className="w-4 h-4 inline" />
                     </button>
                     <button onClick={() => handleDelete(c._id)} className="text-gray-600 hover:text-rose-600">

@@ -33,8 +33,7 @@ export async function updateSetting(params: SettingFormParams) {
         headerScript: params.headerScript,
         footerScript: params.footerScript,
         maintenanceMode: params.maintenanceMode ?? false,
-        primaryColor: params.primaryColor,
-        primaryForegroundColor: params.primaryForegroundColor,
+
         seo: params.seo,
       });
       await setting.save();
@@ -46,8 +45,7 @@ export async function updateSetting(params: SettingFormParams) {
       if (params.headerScript !== undefined) setting.headerScript = params.headerScript;
       if (params.footerScript !== undefined) setting.footerScript = params.footerScript;
       if (params.maintenanceMode !== undefined) setting.maintenanceMode = params.maintenanceMode;
-      if (params.primaryColor !== undefined) setting.primaryColor = params.primaryColor;
-      if (params.primaryForegroundColor !== undefined) setting.primaryForegroundColor = params.primaryForegroundColor;
+
       if (params.seo !== undefined) {
         // Merge existing SEO with new params to preserve fields not being updated
         setting.seo = {

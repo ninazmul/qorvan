@@ -98,7 +98,7 @@ export default function CouponsClient({ initialCoupons }: { initialCoupons: any[
             </div>
             <button
               type="submit"
-              className="w-full py-2 bg-amber-900 text-amber-300 font-bold rounded-md hover:bg-amber-950 transition"
+              className="w-full py-2 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition"
             >
               Generate Coupon
             </button>
@@ -119,8 +119,8 @@ export default function CouponsClient({ initialCoupons }: { initialCoupons: any[
             <tbody className="divide-y divide-gray-100">
               {coupons.map((c) => (
                 <tr key={c._id} className="hover:bg-gray-50 transition">
-                  <td className="py-3.5 px-4 font-mono font-bold text-amber-900 flex items-center gap-2">
-                    <Ticket className="w-4 h-4 text-amber-700" />
+                  <td className="py-3.5 px-4 font-mono font-bold text-gray-900 flex items-center gap-2">
+                    <Ticket className="w-4 h-4 text-gray-800" />
                     {c.code}
                   </td>
                   <td className="py-3.5 px-4 font-bold text-gray-900">

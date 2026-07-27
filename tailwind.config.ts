@@ -32,7 +32,7 @@ module.exports = withUt({
           300: "#92D6A7",
           400: "#5CB878",
           500: "#2E8B57",
-          600: "#226B3A", // Brand Color
+          600: "#000000", // Brand Color
           700: "#1B5A31", // Hover
           800: "#134726", // Active
           900: "#0F3D24", // Footer / Dark Sections

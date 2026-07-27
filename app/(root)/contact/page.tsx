@@ -7,7 +7,7 @@ import ContactForm from "./ContactForm";
 export const revalidate = 120;
 
 export const metadata: Metadata = {
-  title: "Contact Us | Hormuzan Foundation",
+  title: "Contact Us | Qorvan",
   description: "Get in touch with us for inquiries, partnerships, or support.",
 };
 
@@ -38,7 +38,7 @@ export default async function ContactPage() {
 
             {setting?.contactEmail && (
               <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
                   <Mail size={18} className="text-primary" />
                 </div>
                 <div>
@@ -57,7 +57,7 @@ export default async function ContactPage() {
 
             {setting?.phoneNumber && (
               <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
                   <Phone size={18} className="text-primary" />
                 </div>
                 <div>
@@ -73,7 +73,7 @@ export default async function ContactPage() {
 
             {setting?.address && (
               <div className="flex items-start gap-4 p-4 bg-white rounded-xl border border-slate-100 shadow-sm">
-                <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
                   <MapPin size={18} className="text-primary" />
                 </div>
                 <div>

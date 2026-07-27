@@ -146,7 +146,7 @@ export default function DeliveryZonesClient({ initialZones }: { initialZones: an
             <div className="flex gap-2 pt-2">
               <button
                 type="submit"
-                className="flex-1 py-2 bg-amber-900 text-amber-300 font-bold rounded-md hover:bg-amber-950 transition"
+                className="flex-1 py-2 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition"
               >
                 {editingId ? "Update Zone" : "Add Zone"}
               </button>
@@ -180,7 +180,7 @@ export default function DeliveryZonesClient({ initialZones }: { initialZones: an
                 <tr key={z._id} className="hover:bg-gray-50 transition">
                   <td className="py-3.5 px-4">
                     <div className="font-bold text-gray-900 flex items-center gap-1.5">
-                      <Truck className="w-4 h-4 text-amber-700" />
+                      <Truck className="w-4 h-4 text-gray-800" />
                       {z.name}
                     </div>
                     <div className="text-[10px] text-gray-500 mt-0.5 max-w-xs truncate">
@@ -191,9 +191,9 @@ export default function DeliveryZonesClient({ initialZones }: { initialZones: an
                   <td className="py-3.5 px-4 text-gray-600 font-medium">
                     {z.freeDeliveryThreshold ? `Orders > ৳${z.freeDeliveryThreshold}` : "None"}
                   </td>
-                  <td className="py-3.5 px-4 font-medium text-amber-900">{z.estimatedDays}</td>
+                  <td className="py-3.5 px-4 font-medium text-gray-900">{z.estimatedDays}</td>
                   <td className="py-3.5 px-4 text-right space-x-2">
-                    <button onClick={() => handleEdit(z)} className="text-gray-600 hover:text-amber-800">
+                    <button onClick={() => handleEdit(z)} className="text-gray-600 hover:text-gray-900">
                       <Edit2 className="w-4 h-4 inline" />
                     </button>
                     <button onClick={() => handleDelete(z._id)} className="text-gray-600 hover:text-rose-600">

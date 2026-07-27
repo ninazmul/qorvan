@@ -20,6 +20,7 @@ export const CMS_MODULES = [
   "media",
   "settings",
   "users",
+  "subscribers",
 ] as const;
 
 export type CmsModule = (typeof CMS_MODULES)[number];
@@ -59,6 +60,7 @@ export const MODULE_LABELS: Record<CmsModule, string> = {
   media: "Media Library",
   settings: "Settings",
   users: "Users",
+  subscribers: "Subscribers",
 };
 
 // Sidebar route mapping
@@ -82,6 +84,7 @@ export const MODULE_ROUTES: Record<CmsModule, string> = {
   media: "/dashboard/media",
   settings: "/dashboard/settings",
   users: "/dashboard/users",
+  subscribers: "/dashboard/subscribers",
 };
 
 export const DASHBOARD_INVENTORY_VIEW = "dashboard:inventory:read";

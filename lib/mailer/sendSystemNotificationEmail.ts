@@ -48,10 +48,9 @@ export async function sendAdminNotification({
         ([key, val]) => `
         <tr style="border-bottom:1px solid #f0f0f0;">
           <td style="padding:10px;font-weight:bold;color:#374151;width:35%;vertical-align:top;">${escapeHtml(key)}</td>
-          <td style="padding:10px;color:#1f2937;vertical-align:top;word-break:break-word;">${
-            key.toLowerCase().includes("url") || key.toLowerCase().includes("resume")
-              ? `<a href="${escapeHtml(val!)}" target="_blank" style="color:#226B3A;font-weight:bold;">${escapeHtml(val!)}</a>`
-              : escapeHtml(val!).replace(/\n/g, "<br/>")
+          <td style="padding:10px;color:#1f2937;vertical-align:top;word-break:break-word;">${key.toLowerCase().includes("url") || key.toLowerCase().includes("resume")
+            ? `<a href="${escapeHtml(val!)}" target="_blank" style="color:#226B3A;font-weight:bold;">${escapeHtml(val!)}</a>`
+            : escapeHtml(val!).replace(/\n/g, "<br/>")
           }</td>
         </tr>
       `,
@@ -65,7 +64,7 @@ export async function sendAdminNotification({
           
           <div style="padding:24px;background:#226B3A;color:#ffffff;">
             <h2 style="margin:0;font-size:20px;font-weight:bold;">${escapeHtml(title)} 📩</h2>
-            <p style="margin:6px 0 0 0;font-size:13px;opacity:0.9;">Notification for Admin from Hormuzan Foundation Website</p>
+            <p style="margin:6px 0 0 0;font-size:13px;opacity:0.9;">Notification for Admin from Qorvan Website</p>
           </div>
 
           <div style="padding:24px;">
@@ -75,7 +74,7 @@ export async function sendAdminNotification({
           </div>
 
           <div style="padding:14px;text-align:center;font-size:12px;color:#6b7280;background:#f9fafb;border-top:1px solid #f3f4f6;">
-            © ${new Date().getFullYear()} Hormuzan Foundation. All rights reserved.
+            © ${new Date().getFullYear()} Qorvan. All rights reserved.
           </div>
 
         </div>
@@ -84,7 +83,7 @@ export async function sendAdminNotification({
     `;
 
     await transporter.sendMail({
-      from: `"Hormuzan Foundation" <${SMTP_USER}>`,
+      from: `"Qorvan" <${SMTP_USER}>`,
       to: CONTACT_RECEIVER,
       subject: `[Admin Alert] ${subject}`,
       html,

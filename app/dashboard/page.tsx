@@ -51,7 +51,7 @@ export default async function DashboardOverviewPage() {
       value: formatCurrency(stats.monthlySales),
       sub: "This calendar month",
       icon: DollarSign,
-      color: "bg-amber-50 text-amber-700 border-amber-200",
+      color: "bg-gray-200 text-gray-800 border-gray-200",
     },
     {
       label: "Total Orders",
@@ -93,11 +93,11 @@ export default async function DashboardOverviewPage() {
   ] as const;
 
   return (
-    <div className="space-y-8 pb-10 bg-gradient-to-br from-amber-50 via-white to-emerald-50 p-6 rounded-xl shadow-lg">
+    <div className="space-y-8 pb-10 bg-gradient-to-br bg-gray-50 p-6 rounded-xl shadow-lg">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-5">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-amber-700 tracking-wider uppercase">
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-800 tracking-wider uppercase">
             <LayoutDashboard className="w-4 h-4" />
             QORVAN Executive Dashboard
           </div>
@@ -116,7 +116,7 @@ export default async function DashboardOverviewPage() {
                   <Link
                     key={act.href}
                     href={act.href}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md border border-gray-200 bg-white text-gray-700 hover:border-amber-500 hover:text-amber-900 transition shadow-sm backdrop-blur-sm bg-white/70"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-md border border-gray-200 bg-white text-gray-700 hover:border-black hover:text-gray-900 transition shadow-sm backdrop-blur-sm bg-white/70"
                   >
                     <Icon className="w-3.5 h-3.5" />
                     {act.label}
@@ -158,8 +158,8 @@ export default async function DashboardOverviewPage() {
       </div>
 
       {/* Quick Action Navigation Grid */}
-      <div className="bg-amber-950/5 border border-amber-900/10 rounded-xl p-5 backdrop-filter backdrop-blur-lg bg-white/30">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-amber-950 mb-3">
+      <div className="bg-black/5 border border-gray-200 rounded-xl p-5 backdrop-filter backdrop-blur-lg bg-white/30">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-black mb-3">
           Management Quick Actions
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -169,12 +169,12 @@ export default async function DashboardOverviewPage() {
               <Link
                 key={act.href}
                 href={act.href}
-                className="bg-white border border-gray-200 hover:border-amber-600 rounded-lg p-3 flex items-center gap-3 transition shadow-sm group"
+                className="bg-white border border-gray-200 hover:border-black rounded-lg p-3 flex items-center gap-3 transition shadow-sm group"
               >
-                <div className="w-8 h-8 rounded-md bg-amber-50 group-hover:bg-amber-600 group-hover:text-white text-amber-700 flex items-center justify-center transition">
+                <div className="w-8 h-8 rounded-md bg-gray-200 group-hover:bg-gray-800 group-hover:text-white text-gray-800 flex items-center justify-center transition">
                   <Icon className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-bold text-gray-800 group-hover:text-amber-900 transition">
+                <span className="text-xs font-bold text-gray-800 group-hover:text-gray-900 transition">
                   {act.label}
                 </span>
               </Link>
@@ -192,7 +192,7 @@ export default async function DashboardOverviewPage() {
           </div>
           <Link
             href="/dashboard/orders"
-            className="text-xs font-bold text-amber-700 hover:text-amber-900 inline-flex items-center gap-1"
+            className="text-xs font-bold text-gray-800 hover:text-gray-900 inline-flex items-center gap-1"
           >
             View All Orders <ArrowRight className="w-3.5 h-3.5" />
           </Link>
@@ -220,7 +220,7 @@ export default async function DashboardOverviewPage() {
               <tbody className="divide-y divide-gray-100">
                 {stats.recentOrders.map((ord: any) => (
                   <tr key={ord._id} className="hover:bg-gray-50 transition">
-                    <td className="py-3 px-4 font-bold text-amber-900">{ord.orderNumber}</td>
+                    <td className="py-3 px-4 font-bold text-gray-900">{ord.orderNumber}</td>
                     <td className="py-3 px-4 font-medium text-gray-900">
                       {ord.shippingAddress?.fullName || ord.customer?.name || "Guest Customer"}
                       <div className="text-[10px] text-gray-400">{ord.shippingAddress?.city}</div>
@@ -236,7 +236,7 @@ export default async function DashboardOverviewPage() {
                         ord.orderStatus === "delivered" ? "bg-emerald-100 text-emerald-800" :
                         ord.orderStatus === "shipped" ? "bg-blue-100 text-blue-800" :
                         ord.orderStatus === "cancelled" ? "bg-rose-100 text-rose-800" :
-                        "bg-amber-100 text-amber-800"
+                        "bg-gray-100 text-gray-900"
                       }`}>
                         {ord.orderStatus}
                       </span>
@@ -244,7 +244,7 @@ export default async function DashboardOverviewPage() {
                     <td className="py-3 px-4 text-right">
                       <Link
                         href={`/dashboard/orders/${ord._id}`}
-                        className="text-xs font-semibold text-amber-700 hover:underline"
+                        className="text-xs font-semibold text-gray-800 hover:underline"
                       >
                         Manage
                       </Link>

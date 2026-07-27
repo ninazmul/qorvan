@@ -122,8 +122,8 @@ export default async function RootLayout({
 
   const cssVars = `
     :root {
-      --primary: ${setting?.primaryColor || "#000000"};
-      --primary-foreground: ${setting?.primaryForegroundColor || "#FFFFFF"};
+      --primary: #000000;
+      --primary-foreground: #FFFFFF;
     }
   `;
 

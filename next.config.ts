@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "img.clerk.com", port: "" },
       { protocol: "https", hostname: "ufs.sh", port: "" },
       { protocol: "https", hostname: "*.ufs.sh", port: "" },
+      { protocol: "https", hostname: "images.unsplash.com", port: "" },
+      { protocol: "https", hostname: "plus.unsplash.com", port: "" },
+      { protocol: "https", hostname: "**", port: "" },
     ],
   },
 };

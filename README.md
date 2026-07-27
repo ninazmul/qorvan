@@ -1,15 +1,15 @@
-# 🏛️ Hormuzan Foundation
+# 🏛️ Qorvan
 
 <p align="center">
   <a href="https://www.qorvan.org">
-    <img src="public/favicon.ico" alt="Hormuzan Foundation Logo" width="80" height="80" />
+    <img src="public/favicon.ico" alt="Qorvan Logo" width="80" height="80" />
   </a>
 </p>
 
 <h3 align="center">Empowering Communities • Driving Social Impact • Transparent Philanthropy</h3>
 
 <p align="center">
-  A modern, high-performance web platform and administrative dashboard built for <b>Hormuzan Foundation</b> using Next.js 16, React 19, TypeScript, Tailwind CSS, MongoDB, and Clerk Auth.
+  A modern, high-performance web platform and administrative dashboard built for <b>Qorvan</b> using Next.js 16, React 19, TypeScript, Tailwind CSS, MongoDB, and Clerk Auth.
 </p>
 
 <p align="center">
@@ -187,7 +187,7 @@ Populate `.env.local` with your operational API keys and credentials (see [Envir
 
 ## 🛡️ Security & Role-Based Access Control (RBAC)
 
-Hormuzan Foundation utilizes a robust RBAC architecture:
+Qorvan utilizes a robust RBAC architecture:
 
 - **Authentication**: Secured via Clerk Middleware protecting `/dashboard` and backend API endpoints.
 - **Granular Permissions**: Managed via `constants/permissions.ts` defining user roles (Super Admin, Admin, Content Manager, Editor, Viewer).
@@ -211,5 +211,5 @@ In the project directory, you can run:
 ## 📄 License & Authors
 
 - **Author**: Nazmul ([@ninazmul](https://github.com/ninazmul)) - `nazmulsaw@gmail.com`
-- **Organization**: [Hormuzan Foundation](https://www.qorvan.org)
+- **Organization**: [Qorvan](https://www.qorvan.org)
 - **License**: MIT License

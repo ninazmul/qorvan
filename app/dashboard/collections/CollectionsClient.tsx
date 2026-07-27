@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Sparkles, Trash2, Edit2 } from "lucide-react";
 import { createCollection, deleteCollection } from "@/lib/actions/collection.actions";
 import { toast } from "react-hot-toast";
+import ImageUploader from "@/components/shared/ImageUploader";
 
 export default function CollectionsClient({ initialCollections }: { initialCollections: any[] }) {
   const [collections, setCollections] = useState(initialCollections);
@@ -78,16 +79,12 @@ export default function CollectionsClient({ initialCollections }: { initialColle
                 className="w-full p-2 border rounded-md font-mono"
               />
             </div>
-            <div>
-              <label className="font-bold block mb-1">Banner Image URL</label>
-              <input
-                type="text"
-                value={bannerImage}
-                onChange={(e) => setBannerImage(e.target.value)}
-                placeholder="https://..."
-                className="w-full p-2 border rounded-md"
-              />
-            </div>
+            <ImageUploader
+              label="Banner Image"
+              value={bannerImage}
+              onChange={(url) => setBannerImage(url)}
+              placeholder="https://... or upload from library"
+            />
             <div>
               <label className="font-bold block mb-1">Description</label>
               <textarea
@@ -99,7 +96,7 @@ export default function CollectionsClient({ initialCollections }: { initialColle
             </div>
             <button
               type="submit"
-              className="w-full py-2 bg-amber-900 text-amber-300 font-bold rounded-md hover:bg-amber-950 transition"
+              className="w-full py-2 bg-black text-white font-bold rounded-md hover:bg-gray-800 transition"
             >
               Create Collection
             </button>

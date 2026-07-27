@@ -198,7 +198,7 @@ export default function CheckoutPage() {
                     onClick={() => setSelectedZone(zone)}
                     className={`p-4 rounded-2xl border cursor-pointer transition flex items-center justify-between ${
                       isSelected
-                        ? "bg-amber-950 text-amber-300 border-amber-950 shadow-md"
+                        ? "bg-black text-amber-300 border-amber-950 shadow-md"
                         : "bg-white text-gray-700 border-gray-200 hover:border-amber-700"
                     }`}
                   >
@@ -217,7 +217,7 @@ export default function CheckoutPage() {
         </div>
 
         {/* Order Summary & Payment Button */}
-        <div className="bg-amber-950 text-amber-50 p-6 sm:p-8 rounded-3xl border border-amber-900/50 shadow-xl space-y-6">
+        <div className="bg-black text-amber-50 p-6 sm:p-8 rounded-3xl border border-amber-900/50 shadow-xl space-y-6">
           <h2 className="text-sm font-bold uppercase tracking-wider text-amber-300 border-b border-amber-900 pb-3">
             3. Payment & Order Summary
           </h2>
@@ -235,13 +235,13 @@ export default function CheckoutPage() {
             </div>
             <div className="border-t border-amber-900/60 pt-3 flex justify-between text-base font-extrabold">
               <span className="text-amber-200">Total Payable (COD):</span>
-              <span className="text-amber-400">৳{totalPayable.toLocaleString()}</span>
+              <span className="text-white">৳{totalPayable.toLocaleString()}</span>
             </div>
           </div>
 
-          <div className="bg-amber-900/40 p-4 rounded-2xl border border-amber-800/40 text-xs space-y-2">
+          <div className="bg-black/40 p-4 rounded-2xl border border-amber-800/40 text-xs space-y-2">
             <div className="flex items-center gap-2 text-amber-300 font-bold uppercase">
-              <ShieldCheck className="w-4 h-4 text-amber-400" /> Cash on Delivery (COD)
+              <ShieldCheck className="w-4 h-4 text-white" /> Cash on Delivery (COD)
             </div>
             <p className="text-[11px] text-amber-200/80 leading-relaxed">
               Pay in cash to the delivery rider upon examining your parcel.

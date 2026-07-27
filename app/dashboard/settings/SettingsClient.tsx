@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { updateSetting } from "@/lib/actions/setting.actions";
 import { usePermissions } from "@/lib/hooks/use-permissions";
@@ -22,9 +21,7 @@ export default function SettingsClient({ initialSettings, access }: Props) {
   const canUpdate = hasPermission("settings", "update");
 
   const [formData, setFormData] = useState<any>({
-    siteName: initialSettings.siteName || "Hormuzan Foundation",
-    primaryColor: initialSettings.primaryColor || "#226B3A",
-    primaryForegroundColor: initialSettings.primaryForegroundColor || "#FFFFFF",
+
     contactEmail: initialSettings.contactEmail || "",
     phoneNumber: initialSettings.phoneNumber || "",
     address: initialSettings.address || "",
@@ -64,9 +61,9 @@ export default function SettingsClient({ initialSettings, access }: Props) {
         ...formData.seo,
         siteKeywords: formData.seo.siteKeywords
           ? formData.seo.siteKeywords
-              .split(",")
-              .map((k: string) => k.trim())
-              .filter(Boolean)
+            .split(",")
+            .map((k: string) => k.trim())
+            .filter(Boolean)
           : [],
       },
     };
@@ -102,89 +99,15 @@ export default function SettingsClient({ initialSettings, access }: Props) {
         )}
       </div>
 
-      <Tabs defaultValue="general" className="w-full">
+      <Tabs defaultValue="contact" className="w-full">
         <TabsList className="grid grid-cols-4 w-full bg-white border">
-          <TabsTrigger value="general">General & Branding</TabsTrigger>
+
           <TabsTrigger value="contact">Contact & Map</TabsTrigger>
           <TabsTrigger value="seo">SEO & Analytics</TabsTrigger>
           <TabsTrigger value="advanced">Advanced & Scripts</TabsTrigger>
         </TabsList>
 
-        {/* General & Branding */}
-        <TabsContent
-          value="general"
-          className="bg-white p-6 rounded-lg shadow-sm border mt-4 space-y-6"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label>Organization Site Name</Label>
-              <Input
-                value={formData.siteName}
-                onChange={(e) => handleChange("siteName", e.target.value)}
-                disabled={!canUpdate}
-              />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label>Primary Brand Color</Label>
-              <div className="flex gap-2 items-center">
-                <Input
-                  type="color"
-                  className="w-12 h-10 p-1 cursor-pointer"
-                  value={formData.primaryColor}
-                  onChange={(e) => handleChange("primaryColor", e.target.value)}
-                  disabled={!canUpdate}
-                />
-                <Input
-                  value={formData.primaryColor}
-                  onChange={(e) => handleChange("primaryColor", e.target.value)}
-                  disabled={!canUpdate}
-                />
-              </div>
-            </div>
-            <div>
-              <Label>Primary Text/Contrast Color</Label>
-              <div className="flex gap-2 items-center">
-                <Input
-                  type="color"
-                  className="w-12 h-10 p-1 cursor-pointer"
-                  value={formData.primaryForegroundColor}
-                  onChange={(e) =>
-                    handleChange("primaryForegroundColor", e.target.value)
-                  }
-                  disabled={!canUpdate}
-                />
-                <Input
-                  value={formData.primaryForegroundColor}
-                  onChange={(e) =>
-                    handleChange("primaryForegroundColor", e.target.value)
-                  }
-                  disabled={!canUpdate}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between border-t pt-4">
-            <div>
-              <Label className="font-semibold text-gray-900">
-                Maintenance Mode
-              </Label>
-              <p className="text-xs text-gray-500">
-                Temporarily redirect visitors to maintenance page
-              </p>
-            </div>
-            <Switch
-              checked={formData.maintenanceMode}
-              onCheckedChange={(checked) =>
-                handleChange("maintenanceMode", checked)
-              }
-              disabled={!canUpdate}
-            />
-          </div>
-        </TabsContent>
 
         {/* Contact & Map */}
         <TabsContent

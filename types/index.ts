@@ -83,8 +83,7 @@ export type SettingFormParams = {
   headerScript?: string;
   footerScript?: string;
   maintenanceMode?: boolean;
-  primaryColor?: string;
-  primaryForegroundColor?: string;
+
   seo?: {
     siteTitle?: string;
     siteMetaDescription?: string;

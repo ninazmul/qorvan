@@ -52,13 +52,13 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
             placeholder="Search by order #, customer name, or phone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:border-amber-600"
+            className="w-full pl-9 pr-4 py-2 text-xs border border-gray-200 rounded-md focus:outline-none focus:border-black"
           />
         </div>
         <select
           value={selectedStatus}
           onChange={(e) => setSelectedStatus(e.target.value)}
-          className="px-3 py-2 text-xs border border-gray-200 rounded-md bg-white focus:outline-none focus:border-amber-600"
+          className="px-3 py-2 text-xs border border-gray-200 rounded-md bg-white focus:outline-none focus:border-black"
         >
           <option value="all">All Order Statuses</option>
           <option value="pending">Pending</option>
@@ -96,7 +96,7 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
               ) : (
                 filteredOrders.map((ord) => (
                   <tr key={ord._id} className="hover:bg-gray-50 transition">
-                    <td className="py-3.5 px-4 font-mono font-bold text-amber-900">
+                    <td className="py-3.5 px-4 font-mono font-bold text-gray-900">
                       {ord.orderNumber}
                     </td>
                     <td className="py-3.5 px-4 text-gray-500">
@@ -129,15 +129,14 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
                       <select
                         value={ord.orderStatus}
                         onChange={(e) => handleStatusChange(ord._id, e.target.value)}
-                        className={`text-[10px] font-bold px-2 py-1 rounded border bg-white focus:outline-none ${
-                          ord.orderStatus === "delivered"
+                        className={`text-[10px] font-bold px-2 py-1 rounded border bg-white focus:outline-none ${ord.orderStatus === "delivered"
                             ? "text-emerald-800 border-emerald-300"
                             : ord.orderStatus === "shipped"
-                            ? "text-blue-800 border-blue-300"
-                            : ord.orderStatus === "cancelled"
-                            ? "text-rose-800 border-rose-300"
-                            : "text-amber-800 border-amber-300"
-                        }`}
+                              ? "text-blue-800 border-blue-300"
+                              : ord.orderStatus === "cancelled"
+                                ? "text-rose-800 border-rose-300"
+                                : "text-gray-900 border-gray-300"
+                          }`}
                       >
                         <option value="pending">Pending</option>
                         <option value="confirmed">Confirmed</option>
@@ -150,7 +149,7 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
                     <td className="py-3.5 px-4 text-right">
                       <Link
                         href={`/dashboard/orders/${ord._id}`}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-amber-800 hover:text-amber-950"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-gray-900 hover:text-black"
                       >
                         <Eye className="w-3.5 h-3.5" /> View Invoice
                       </Link>

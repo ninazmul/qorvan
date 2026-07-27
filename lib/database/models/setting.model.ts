@@ -9,8 +9,7 @@ export interface ISetting extends Document {
   headerScript?: string;
   footerScript?: string;
   maintenanceMode: boolean;
-  primaryColor?: string;
-  primaryForegroundColor?: string;
+
   seo?: {
     siteTitle?: string;
     siteMetaDescription?: string;
@@ -38,8 +37,7 @@ const SettingSchema = new Schema(
     headerScript: { type: String },
     footerScript: { type: String },
     maintenanceMode: { type: Boolean, default: false },
-    primaryColor: { type: String, default: "#226B3A" },
-    primaryForegroundColor: { type: String, default: "#FFFFFF" },
+
     seo: {
       type: {
         siteTitle: { type: String },

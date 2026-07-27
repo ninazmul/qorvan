@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Image as ImageIcon, LayoutGrid, Pencil, Plus, Save, Sparkles, Trash2, X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { createHeroSlide, deleteHeroSlide, updateHeroSlide } from "@/lib/actions/hero.actions";
+import ImageUploader from "@/components/shared/ImageUploader";
 
 interface HeroSlide {
   _id: string;
@@ -114,7 +115,7 @@ export default function HomepageCmsClient({ initialSlides }: { initialSlides: He
     <div className="space-y-6 pb-10">
       <div className="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold text-amber-700 uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-xs font-semibold text-gray-800 uppercase tracking-wider">
             <LayoutGrid className="w-4 h-4" />
             Storefront Content
           </div>
@@ -123,7 +124,7 @@ export default function HomepageCmsClient({ initialSlides }: { initialSlides: He
         </div>
         <button
           onClick={openCreate}
-          className="px-4 py-2 bg-amber-900 text-amber-300 font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-amber-950 transition flex items-center gap-2 shadow-sm"
+          className="px-4 py-2 bg-black text-white font-bold text-xs uppercase tracking-wider rounded-lg hover:bg-gray-800 transition flex items-center gap-2 shadow-sm"
         >
           <Plus className="w-4 h-4" /> Add Hero Slide
         </button>
@@ -138,27 +139,27 @@ export default function HomepageCmsClient({ initialSlides }: { initialSlides: He
         ) : (
           sortedSlides.map((slide) => (
             <div key={slide._id} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-              <div className="relative aspect-[16/7] bg-amber-950">
+              <div className="relative aspect-[16/7] bg-black">
                 {slide.backgroundImage ? (
                   <img src={slide.backgroundImage} alt={slide.title} className="w-full h-full object-cover opacity-75" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-amber-300">
+                  <div className="w-full h-full flex items-center justify-center text-white">
                     <ImageIcon className="w-8 h-8" />
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-r from-amber-950/90 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/90 to-transparent" />
                 <div className="absolute left-5 right-5 bottom-5 text-white">
-                  <div className="text-[10px] uppercase tracking-widest text-amber-300 font-bold">
+                  <div className="text-[10px] uppercase tracking-widest text-white font-bold">
                     {slide.enabled === false ? "Disabled" : "Published"} / Order {slide.order ?? 0}
                   </div>
                   <h2 className="text-lg font-serif font-bold mt-1">{slide.title}</h2>
-                  {slide.subtitle && <p className="text-xs text-amber-100/80 mt-1 line-clamp-2">{slide.subtitle}</p>}
+                  {slide.subtitle && <p className="text-xs text-gray-200/80 mt-1 line-clamp-2">{slide.subtitle}</p>}
                 </div>
               </div>
               <div className="p-4 flex items-center justify-end gap-2">
                 <button
                   onClick={() => openEdit(slide)}
-                  className="p-2 rounded-lg text-amber-800 hover:bg-amber-50"
+                  className="p-2 rounded-lg text-gray-900 hover:bg-gray-200"
                   title="Edit slide"
                 >
                   <Pencil className="w-4 h-4" />
@@ -178,7 +179,7 @@ export default function HomepageCmsClient({ initialSlides }: { initialSlides: He
 
       {isFormOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl border border-amber-900/10 max-w-2xl w-full p-6">
+          <div className="bg-white rounded-xl shadow-2xl border border-gray-200 max-w-2xl w-full p-6">
             <div className="flex items-center justify-between border-b pb-4 mb-4">
               <h2 className="text-lg font-bold text-gray-900">{editingSlide ? "Edit Hero Slide" : "Create Hero Slide"}</h2>
               <button onClick={() => setIsFormOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100">
@@ -205,15 +206,13 @@ export default function HomepageCmsClient({ initialSlides }: { initialSlides: He
                   className="w-full p-2.5 border rounded-lg"
                 />
               </div>
-              <div>
-                <label className="font-bold text-gray-700 mb-1 block">Background Image URL *</label>
-                <input
-                  required
-                  value={form.backgroundImage}
-                  onChange={(e) => setForm({ ...form, backgroundImage: e.target.value })}
-                  className="w-full p-2.5 border rounded-lg"
-                />
-              </div>
+              <ImageUploader
+                label="Background Image"
+                required
+                value={form.backgroundImage}
+                onChange={(url) => setForm({ ...form, backgroundImage: url })}
+                placeholder="https://... or upload from library"
+              />
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="font-bold text-gray-700 mb-1 block">Button Text</label>
@@ -256,7 +255,7 @@ export default function HomepageCmsClient({ initialSlides }: { initialSlides: He
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2 bg-amber-900 text-amber-300 rounded-lg font-bold inline-flex items-center gap-2 disabled:opacity-60"
+                  className="px-5 py-2 bg-black text-white rounded-lg font-bold inline-flex items-center gap-2 disabled:opacity-60"
                 >
                   <Save className="w-4 h-4" /> {loading ? "Saving..." : "Save Slide"}
                 </button>

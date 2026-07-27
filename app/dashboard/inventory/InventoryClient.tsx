@@ -123,7 +123,7 @@ export default function InventoryClient({ initialProducts, currentPage }: { init
                     <img src={p.featuredImage} alt={p.title} className="w-8 h-8 rounded object-cover border" />
                     {p.title}
                   </td>
-                  <td className="py-3 px-4 font-mono font-bold text-amber-900">{p.sku}</td>
+                  <td className="py-3 px-4 font-mono font-bold text-gray-900">{p.sku}</td>
                   <td className="py-3 px-4">
                     <input
                       type="number"
@@ -135,9 +135,8 @@ export default function InventoryClient({ initialProducts, currentPage }: { init
                   <td className="py-3 px-4 text-gray-500 font-medium">{p.lowStockThreshold || 5} units</td>
                   <td className="py-3 px-4">
                     <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        isLow ? "bg-rose-100 text-rose-800" : "bg-emerald-100 text-emerald-800"
-                      }`}
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${isLow ? "bg-rose-100 text-rose-800" : "bg-emerald-100 text-emerald-800"
+                        }`}
                     >
                       {isLow ? "Low Stock Alert" : "In Stock"}
                     </span>
@@ -147,7 +146,7 @@ export default function InventoryClient({ initialProducts, currentPage }: { init
                       <button
                         onClick={() => handleSaveStock(p._id)}
                         disabled={loading[p._id]}
-                        className="px-3 py-1 bg-amber-900 text-amber-300 font-bold rounded hover:bg-amber-950 text-xs inline-flex items-center gap-1 shadow-sm"
+                        className="px-3 py-1 bg-black text-white font-bold rounded hover:bg-gray-800 text-xs inline-flex items-center gap-1 shadow-sm"
                       >
                         <Save className="w-3.5 h-3.5" /> Save
                       </button>

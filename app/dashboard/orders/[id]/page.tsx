@@ -14,7 +14,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     return (
       <div className="p-10 text-center">
         <h1 className="text-xl font-bold text-rose-600">Order Not Found</h1>
-        <Link href="/dashboard/orders" className="text-xs text-amber-800 underline mt-2 block">
+        <Link href="/dashboard/orders" className="text-xs text-gray-900 underline mt-2 block">
           Back to Orders
         </Link>
       </div>
@@ -37,7 +37,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           <div>
             <h1 className="text-xl font-black text-gray-900 flex items-center gap-2">
               Order #{order.orderNumber}
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 uppercase">
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-900 uppercase">
                 {order.orderStatus}
               </span>
             </h1>
@@ -60,7 +60,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Customer & Address Details */}
         <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-amber-900 border-b pb-2 flex items-center gap-1.5">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-gray-900 border-b pb-2 flex items-center gap-1.5">
             <User className="w-4 h-4" /> Customer & Shipping Info
           </h2>
           <div className="text-xs space-y-2 text-gray-700">
@@ -79,7 +79,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                 {order.shippingAddress?.addressLine}, {order.shippingAddress?.city},{" "}
                 {order.shippingAddress?.district}
               </p>
-              <div className="mt-1 inline-block text-[10px] font-bold bg-amber-50 text-amber-900 px-2 py-0.5 rounded border border-amber-200">
+              <div className="mt-1 inline-block text-[10px] font-bold bg-gray-200 text-gray-900 px-2 py-0.5 rounded border border-gray-200">
                 Zone: {order.shippingAddress?.zoneName || "Dhaka City"}
               </div>
             </div>
@@ -88,7 +88,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
         {/* Payment & Summary */}
         <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-amber-900 border-b pb-2">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-gray-900 border-b pb-2">
             Payment & Order Summary
           </h2>
           <div className="text-xs space-y-2">
@@ -114,7 +114,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                 <span>-৳{order.discountAmount?.toLocaleString()}</span>
               </div>
             )}
-            <div className="border-t pt-2 flex justify-between font-black text-sm text-amber-950">
+            <div className="border-t pt-2 flex justify-between font-black text-sm text-black">
               <span>Total Payable (COD):</span>
               <span>৳{order.totalAmount?.toLocaleString()}</span>
             </div>
@@ -123,14 +123,14 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
         {/* Order Tracking History */}
         <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-4">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-amber-900 border-b pb-2 flex items-center gap-1.5">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-gray-900 border-b pb-2 flex items-center gap-1.5">
             <Truck className="w-4 h-4" /> Tracking Timeline
           </h2>
           <div className="space-y-3">
             {order.trackingHistory?.map((ev: any, idx: number) => (
               <div key={idx} className="flex gap-2.5 text-xs">
                 <div className="mt-0.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-700" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-gray-800" />
                 </div>
                 <div>
                   <div className="font-bold text-gray-900 uppercase text-[10px]">{ev.status}</div>
@@ -168,7 +168,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                     {item.size && <div className="text-[10px] text-gray-400">Size: {item.size}</div>}
                   </div>
                 </td>
-                <td className="py-3 px-4 font-mono font-bold text-amber-900">{item.sku}</td>
+                <td className="py-3 px-4 font-mono font-bold text-gray-900">{item.sku}</td>
                 <td className="py-3 px-4 font-medium text-gray-900">৳{item.price?.toLocaleString()}</td>
                 <td className="py-3 px-4 font-bold text-gray-800">{item.quantity}</td>
                 <td className="py-3 px-4 text-right font-bold text-gray-900">

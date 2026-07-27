@@ -9,13 +9,14 @@ import {
 import {
   LayoutDashboard, ShoppingBag, Layers, Sparkles, Award, Boxes,
   ShoppingCart, Users, Ticket, Truck, Star, Undo2, Newspaper,
-  LayoutGrid, BarChart3, Mail, FolderOpen, Settings as SettingsIcon
+  LayoutGrid, BarChart3, Mail, FolderOpen, Settings as SettingsIcon, Bell
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DashboardAccess } from "@/lib/auth/rbac-rules";
 import { usePermissions } from "@/lib/hooks/use-permissions";
 import { CMS_MODULES, CmsModule, MODULE_LABELS, MODULE_ROUTES } from "@/constants/permissions";
+import Image from "next/image";
 
 const iconMap: Record<CmsModule, React.ComponentType<{ className?: string }>> = {
   dashboard: LayoutDashboard,
@@ -37,6 +38,7 @@ const iconMap: Record<CmsModule, React.ComponentType<{ className?: string }>> = 
   media: FolderOpen,
   settings: SettingsIcon,
   users: Users,
+  subscribers: Bell,
 };
 
 export default function AdminSidebar({ access }: { access: DashboardAccess }) {
@@ -48,18 +50,8 @@ export default function AdminSidebar({ access }: { access: DashboardAccess }) {
       <SidebarContent>
         <SidebarGroup className="space-y-4">
           <SidebarGroupLabel className="h-auto py-2">
-            <Link href="/" className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 w-full">
-              <div className="relative w-10 h-10 rounded-md overflow-hidden bg-amber-600/10 flex items-center justify-center border border-amber-600/20">
-                <span className="text-xl font-extrabold text-amber-700 tracking-wider">Q</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-bold text-gray-900 tracking-widest uppercase truncate">
-                  QORVAN
-                </span>
-                <span className="text-[10px] text-amber-700 font-medium tracking-wide">
-                  LUXURY FASHION
-                </span>
-              </div>
+            <Link href="/" className="w-full">
+              <Image src="/assets/images/logo.png" alt="Logo" width={100} height={100} className="w-full h-full object-contain" />
             </Link>
           </SidebarGroupLabel>
 
@@ -82,11 +74,10 @@ export default function AdminSidebar({ access }: { access: DashboardAccess }) {
                       <SidebarMenuButton asChild>
                         <Link
                           href={url}
-                          className={`flex items-center space-x-2 px-4 py-2 rounded-md transition ${
-                            isActive
-                              ? "bg-amber-950 text-amber-400 shadow-sm font-semibold"
-                              : "hover:bg-amber-50 hover:text-amber-900 text-gray-700"
-                          }`}
+                          className={`flex items-center space-x-2 px-4 py-2 rounded-md transition ${isActive
+                            ? "bg-black text-white shadow-sm font-semibold"
+                            : "hover:bg-gray-200 hover:text-gray-900 text-gray-700"
+                            }`}
                         >
                           {Icon && <Icon className="w-5 h-5" />}
                           <span className="truncate">{title}</span>

@@ -50,6 +50,7 @@ export interface IProduct extends Document {
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string[];
+  canonicalUrl?: string;
   ratings: {
     average: number;
     count: number;
@@ -113,6 +114,7 @@ const ProductSchema = new Schema(
     seoTitle: { type: String },
     seoDescription: { type: String },
     seoKeywords: [{ type: String }],
+    canonicalUrl: { type: String },
     ratings: {
       average: { type: Number, default: 5 },
       count: { type: Number, default: 0 },

@@ -98,7 +98,7 @@ export default function ContactForm() {
       <Button
         type="submit"
         disabled={loading}
-        className="w-full bg-primary hover:bg-emerald-700 text-white py-3 flex items-center justify-center gap-2"
+        className="w-full bg-primary hover:bg-gray-700 text-white py-3 flex items-center justify-center gap-2"
       >
         <Send size={16} /> {loading ? "Sending..." : "Send Message"}
       </Button>

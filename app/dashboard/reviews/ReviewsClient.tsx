@@ -59,7 +59,7 @@ export default function ReviewsClient({ initialReviews }: { initialReviews: any[
                         ? "bg-emerald-100 text-emerald-800"
                         : r.status === "rejected"
                         ? "bg-rose-100 text-rose-800"
-                        : "bg-amber-100 text-amber-800"
+                        : "bg-gray-100 text-gray-900"
                     }`}
                   >
                     {r.status}

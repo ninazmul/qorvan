@@ -139,13 +139,13 @@ export default function ContactClient({ initialMessages, access }: Props) {
               </TableRow>
             ) : (
               messages.map((msg: any) => (
-                <TableRow key={msg._id} className={msg.status === "unread" ? "bg-amber-50/50 font-semibold" : ""}>
+                <TableRow key={msg._id} className={msg.status === "unread" ? "bg-gray-200/50 font-semibold" : ""}>
                   <TableCell className="text-gray-900">{msg.name}</TableCell>
                   <TableCell>{msg.subject || "General Inquiry"}</TableCell>
                   <TableCell className="text-xs">{msg.email}</TableCell>
                   <TableCell>
                     {msg.status === "unread" ? (
-                      <span className="text-xs px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-bold">
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-900 font-bold">
                         Unread
                       </span>
                     ) : (

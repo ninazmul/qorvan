@@ -38,7 +38,7 @@ export default async function CustomersPage() {
               users.map((u: any) => (
                 <tr key={u._id.toString()} className="hover:bg-gray-50 transition">
                   <td className="py-3.5 px-4 font-bold text-gray-900 flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-amber-100 text-amber-900 flex items-center justify-center font-extrabold uppercase">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 text-gray-900 flex items-center justify-center font-extrabold uppercase">
                       {u.name?.[0] || "U"}
                     </div>
                     {u.name}

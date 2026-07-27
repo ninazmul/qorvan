@@ -99,9 +99,8 @@ export default function ProductDetailClient({
                 <button
                   key={idx}
                   onClick={() => setActiveImage(img)}
-                  className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition ${
-                    activeImage === img ? "border-amber-800 shadow" : "border-gray-200 opacity-70"
-                  }`}
+                  className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition ${activeImage === img ? "border-amber-800 shadow" : "border-gray-200 opacity-70"
+                    }`}
                 >
                   <img src={img} alt="Gallery thumbnail" className="w-full h-full object-cover" />
                 </button>
@@ -113,7 +112,7 @@ export default function ProductDetailClient({
         {/* Right Info Details */}
         <div className="space-y-6">
           <div>
-            <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-800">
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-gray-900">
               {product.category?.name || "QORVAN Luxury"}
             </span>
             <h1 className="text-2xl sm:text-4xl font-extrabold font-serif text-gray-900 mt-1">
@@ -127,7 +126,7 @@ export default function ProductDetailClient({
               </div>
               <span className="text-xs font-bold text-gray-700">{product.ratings?.average || 5.0}</span>
               <span className="text-xs text-gray-400">({product.ratings?.count || 12} customer reviews)</span>
-              <span className="text-xs font-mono font-bold text-amber-900 border-l pl-2 ml-2">SKU: {product.sku}</span>
+              <span className="text-xs font-mono font-bold text-gray-900 border-l pl-2 ml-2">SKU: {product.sku}</span>
             </div>
           </div>
 
@@ -154,11 +153,10 @@ export default function ProductDetailClient({
                   <button
                     key={s}
                     onClick={() => setSelectedSize(s)}
-                    className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${
-                      selectedSize === s
-                        ? "bg-amber-950 text-amber-300 border-amber-950"
+                    className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${selectedSize === s
+                        ? "bg-black text-amber-300 border-amber-950"
                         : "bg-white text-gray-700 border-gray-200 hover:border-amber-800"
-                    }`}
+                      }`}
                   >
                     {s}
                   </button>
@@ -178,11 +176,10 @@ export default function ProductDetailClient({
                     <button
                       key={colorName}
                       onClick={() => setSelectedColor(colorName)}
-                      className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${
-                        selectedColor === colorName
-                          ? "bg-amber-950 text-amber-300 border-amber-950"
+                      className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${selectedColor === colorName
+                          ? "bg-black text-amber-300 border-amber-950"
                           : "bg-white text-gray-700 border-gray-200 hover:border-amber-800"
-                      }`}
+                        }`}
                     >
                       {colorName}
                     </button>
@@ -213,7 +210,7 @@ export default function ProductDetailClient({
 
               <button
                 onClick={handleAddToCart}
-                className="flex-1 py-3.5 bg-amber-950 hover:bg-amber-900 text-amber-300 font-bold text-xs uppercase tracking-widest rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
+                className="flex-1 py-3.5 bg-black hover:bg-black text-amber-300 font-bold text-xs uppercase tracking-widest rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
               >
                 <ShoppingBag className="w-4 h-4" /> Add to Shopping Bag
               </button>
@@ -223,9 +220,8 @@ export default function ProductDetailClient({
                   toggleWishlist(product._id);
                   toast.success(isWishlisted(product._id) ? "Removed from Wishlist" : "Saved to Wishlist");
                 }}
-                className={`p-3.5 rounded-xl border transition ${
-                  isWishlisted(product._id) ? "bg-amber-950 text-amber-400 border-amber-800" : "bg-white border-gray-300 text-gray-700"
-                }`}
+                className={`p-3.5 rounded-xl border transition ${isWishlisted(product._id) ? "bg-black text-white border-amber-800" : "bg-white border-gray-300 text-gray-700"
+                  }`}
               >
                 <Heart className="w-5 h-5 fill-current" />
               </button>
@@ -242,15 +238,15 @@ export default function ProductDetailClient({
           {/* Guarantee Icons */}
           <div className="grid grid-cols-3 gap-3 border-t pt-4 text-[11px] font-semibold text-gray-600">
             <div className="flex items-center gap-1.5">
-              <Truck className="w-4 h-4 text-amber-700" />
+              <Truck className="w-4 h-4 text-gray-800" />
               <span>Dhaka & BD Express</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-amber-700" />
+              <ShieldCheck className="w-4 h-4 text-gray-800" />
               <span>Cash on Delivery</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <RotateCcw className="w-4 h-4 text-amber-700" />
+              <RotateCcw className="w-4 h-4 text-gray-800" />
               <span>100% Authentic Guarantee</span>
             </div>
           </div>
@@ -311,7 +307,7 @@ export default function ProductDetailClient({
           </div>
 
           {/* Review Form */}
-          <form onSubmit={handleReviewSubmit} className="space-y-3 bg-amber-950/5 p-5 rounded-2xl border border-amber-900/10 text-xs">
+          <form onSubmit={handleReviewSubmit} className="space-y-3 bg-black/5 p-5 rounded-2xl border border-amber-900/10 text-xs">
             <h4 className="font-bold text-gray-900">Write a Review</h4>
             <div className="grid grid-cols-2 gap-3">
               <input
@@ -342,7 +338,7 @@ export default function ProductDetailClient({
             <button
               type="submit"
               disabled={submittingReview}
-              className="px-5 py-2 bg-amber-900 text-amber-300 font-bold rounded-md hover:bg-amber-950 transition"
+              className="px-5 py-2 bg-black text-amber-300 font-bold rounded-md hover:bg-black transition"
             >
               {submittingReview ? "Submitting..." : "Submit Review"}
             </button>

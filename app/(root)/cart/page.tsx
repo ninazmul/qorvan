@@ -39,12 +39,12 @@ export default function CartPage() {
   if (cart.length === 0) {
     return (
       <div className="max-w-4xl mx-auto py-24 px-4 text-center space-y-4">
-        <ShoppingBag className="w-16 h-16 text-amber-700 mx-auto opacity-50" />
+        <ShoppingBag className="w-16 h-16 text-gray-800 mx-auto opacity-50" />
         <h1 className="text-2xl font-bold font-serif text-amber-950">Your Shopping Bag is Empty</h1>
         <p className="text-xs text-gray-500">Discover QORVAN's luxury fashion and leather creations.</p>
         <Link
           href="/shop"
-          className="inline-block py-3 px-6 bg-amber-950 text-amber-300 font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-amber-900 transition"
+          className="inline-block py-3 px-6 bg-black text-amber-300 font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-black transition"
         >
           Explore Catalog
         </Link>
@@ -74,7 +74,7 @@ export default function CartPage() {
                 <div className="flex-1 space-y-1">
                   <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
                   <div className="text-xs text-gray-500 font-mono">SKU: {item.sku}</div>
-                  {item.size && <div className="text-xs text-amber-800 font-medium">Size: {item.size}</div>}
+                  {item.size && <div className="text-xs text-gray-900 font-medium">Size: {item.size}</div>}
                   <div className="text-sm font-black text-amber-950">৳{item.price.toLocaleString()}</div>
                 </div>
 
@@ -104,7 +104,7 @@ export default function CartPage() {
         </div>
 
         {/* Summary Card */}
-        <div className="bg-amber-950 text-amber-50 p-6 rounded-3xl border border-amber-900/50 shadow-xl space-y-6">
+        <div className="bg-black text-amber-50 p-6 rounded-3xl border border-amber-900/50 shadow-xl space-y-6">
           <h2 className="text-sm font-bold uppercase tracking-wider text-amber-300 border-b border-amber-900 pb-3">
             Order Summary
           </h2>
@@ -124,7 +124,7 @@ export default function CartPage() {
 
             <div className="border-t border-amber-900/60 pt-3 flex justify-between text-sm font-extrabold">
               <span className="text-amber-200">Total:</span>
-              <span className="text-amber-400">৳{finalTotal.toLocaleString()}</span>
+              <span className="text-white">৳{finalTotal.toLocaleString()}</span>
             </div>
           </div>
 
@@ -139,12 +139,12 @@ export default function CartPage() {
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                 placeholder="PROMO CODE"
-                className="flex-1 px-3 py-2 text-xs bg-amber-900/50 border border-amber-800 text-white rounded-lg uppercase font-mono"
+                className="flex-1 px-3 py-2 text-xs bg-black/50 border border-amber-800 text-white rounded-lg uppercase font-mono"
               />
               <button
                 type="submit"
                 disabled={couponLoading}
-                className="px-4 py-2 bg-amber-500 text-amber-950 font-bold text-xs uppercase rounded-lg hover:bg-amber-400 transition"
+                className="px-4 py-2 bg-gray-2000 text-amber-950 font-bold text-xs uppercase rounded-lg hover:bg-gray-400 transition"
               >
                 Apply
               </button>

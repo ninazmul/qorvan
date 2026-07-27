@@ -63,7 +63,7 @@ export default function ReportsClient() {
           icon: DollarSign,
           change: "+12.5%",
           positive: true,
-          color: "from-amber-500 to-amber-600",
+          color: "from-gray-700 to-black",
         },
         {
           label: "Total Orders",
@@ -132,7 +132,7 @@ export default function ReportsClient() {
                 onClick={() => setPeriod(p)}
                 className={`px-3 py-1.5 rounded-md text-xs font-semibold transition ${
                   period === p
-                    ? "bg-white text-amber-800 shadow-sm"
+                    ? "bg-white text-gray-900 shadow-sm"
                     : "text-gray-500 hover:text-gray-700"
                 }`}
               >
@@ -224,7 +224,7 @@ export default function ReportsClient() {
                   Monthly revenue breakdown
                 </p>
               </div>
-              <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-amber-800 border border-amber-200 rounded-lg hover:bg-amber-50 transition">
+              <button className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-gray-900 border border-gray-200 rounded-lg hover:bg-gray-200 transition">
                 <Download className="w-3.5 h-3.5" /> Export CSV
               </button>
             </div>
@@ -247,7 +247,7 @@ export default function ReportsClient() {
                       {formatCurrency(m.revenue)}
                     </span>
                     <div
-                      className="w-full bg-gradient-to-t from-amber-500 to-amber-300 rounded-t-md transition-all duration-500 min-h-[4px]"
+                      className="w-full bg-gradient-to-t from-gray-900 to-gray-600 rounded-t-md transition-all duration-500 min-h-[4px]"
                       style={{
                         height: `${Math.max(
                           (m.revenue / maxRevenue) * 100,

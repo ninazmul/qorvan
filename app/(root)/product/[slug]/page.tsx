@@ -23,15 +23,21 @@ export async function generateMetadata({
   const p = res.data;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
 
+  const title = p.seoTitle || p.seo?.title || `${p.title} | QORVAN Luxury`;
+  const description =
+    p.seoDescription || p.seo?.description || p.shortDescription || p.description?.slice(0, 160);
+  const keywords = p.seoKeywords?.length ? p.seoKeywords : p.seo?.keywords || p.tags || [];
+
   return {
-    title: p.seo?.title || `${p.title} | QORVAN`,
-    description:
-      p.seo?.description || p.shortDescription || p.description?.slice(0, 160),
-    keywords: p.seo?.keywords || p.tags || [],
+    title,
+    description,
+    keywords,
+    alternates: {
+      canonical: p.canonicalUrl || `${baseUrl}/product/${p.slug}`,
+    },
     openGraph: {
-      title: p.seo?.title || p.title,
-      description:
-        p.seo?.description || p.shortDescription || p.description?.slice(0, 160),
+      title,
+      description,
       url: `${baseUrl}/product/${p.slug}`,
       images: p.featuredImage
         ? [{ url: p.featuredImage, width: 800, height: 800, alt: p.title }]
@@ -40,9 +46,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: p.seo?.title || p.title,
-      description:
-        p.seo?.description || p.shortDescription || p.description?.slice(0, 160),
+      title,
+      description,
       images: p.featuredImage ? [p.featuredImage] : [],
     },
   };
