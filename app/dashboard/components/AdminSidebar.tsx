@@ -39,6 +39,10 @@ import {
   Megaphone,
   Wrench,
   ExternalLink,
+  Target,
+  Radio,
+  Search as SearchIcon,
+  TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -70,6 +74,9 @@ const iconMap: Record<CmsModule, React.ComponentType<{ className?: string }>> = 
   settings: SettingsIcon,
   users: Users,
   subscribers: Bell,
+  pixel: Target,
+  ads: Radio,
+  seo: SearchIcon,
 };
 
 // ─── Sidebar Groups ────────────────────────────────────
@@ -89,6 +96,11 @@ const SIDEBAR_SECTIONS: SidebarSection[] = [
     label: "Sales & Customers",
     icon: ShoppingCart,
     modules: ["orders", "customers", "coupons", "delivery-zones", "reviews", "return-requests"],
+  },
+  {
+    label: "Marketing & Growth",
+    icon: TrendingUp,
+    modules: ["pixel", "ads", "seo"],
   },
   {
     label: "Content",

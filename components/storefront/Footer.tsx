@@ -104,7 +104,9 @@ export default function Footer() {
           </h3>
           <ul className="space-y-2.5 text-xs text-zinc-600 font-medium">
             <li><Link href="/account" className="hover:text-black transition">Track Your Order</Link></li>
-            <li><Link href="/returns" className="hover:text-black transition">Returns & Exchange</Link></li>
+            <li><Link href="/returns" className="hover:text-black transition">Returns &amp; Exchange Policy</Link></li>
+            <li><Link href="/privacy" className="hover:text-black transition">Privacy &amp; Data Policy</Link></li>
+            <li><Link href="/terms" className="hover:text-black transition">Terms &amp; Conditions</Link></li>
             <li><Link href="/contact" className="hover:text-black transition">Contact Concierge</Link></li>
             <li><Link href="/about" className="hover:text-black transition">Our Craftsmanship Story</Link></li>
             <li><Link href="/blog" className="hover:text-black transition">Journal &amp; Stories</Link></li>
@@ -156,9 +158,9 @@ export default function Footer() {
           </span>
         </p>
         <div className="flex items-center space-x-4 mt-3 md:mt-0">
-          <span className="hover:text-black transition cursor-pointer">Terms of Service</span>
-          <span className="hover:text-black transition cursor-pointer">Privacy Policy</span>
-          <span className="hover:text-black transition cursor-pointer">Security</span>
+          <Link href="/terms" className="hover:text-black transition">Terms of Service</Link>
+          <Link href="/privacy" className="hover:text-black transition">Privacy Policy</Link>
+          <Link href="/returns" className="hover:text-black transition">Return Policy</Link>
         </div>
       </div>
     </footer>

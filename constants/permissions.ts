@@ -21,6 +21,9 @@ export const CMS_MODULES = [
   "settings",
   "users",
   "subscribers",
+  "pixel",
+  "ads",
+  "seo",
 ] as const;
 
 export type CmsModule = (typeof CMS_MODULES)[number];
@@ -61,6 +64,9 @@ export const MODULE_LABELS: Record<CmsModule, string> = {
   settings: "Settings",
   users: "Users",
   subscribers: "Subscribers",
+  pixel: "Pixel Tracking",
+  ads: "Ad Campaigns",
+  seo: "SEO Manager",
 };
 
 // Sidebar route mapping
@@ -85,6 +91,9 @@ export const MODULE_ROUTES: Record<CmsModule, string> = {
   settings: "/dashboard/settings",
   users: "/dashboard/users",
   subscribers: "/dashboard/subscribers",
+  pixel: "/dashboard/pixel",
+  ads: "/dashboard/ads",
+  seo: "/dashboard/seo",
 };
 
 export const DASHBOARD_INVENTORY_VIEW = "dashboard:inventory:read";
