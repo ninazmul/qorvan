@@ -24,7 +24,7 @@ export default function OrdersClient({ initialOrders }: { initialOrders: any[] }
     try {
       const res = await updateOrderStatus(orderId, newStatus, `Status updated to ${newStatus} by Admin`);
       if (res.success) {
-        toast.success(`Order status updated to ${newStatus}`);
+        toast.success(`Order status updated to ${newStatus} & email sent to customer`);
         setOrders((prev) => prev.map((o) => (o._id === orderId ? res.data : o)));
       } else {
         toast.error(res.error || "Failed to update order status");

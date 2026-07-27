@@ -8,6 +8,7 @@ import Coupon from "@/lib/database/models/coupon.model";
 import User from "@/lib/database/models/user.model";
 import { requirePermission } from "@/lib/auth/rbac";
 import { sendSystemNotificationEmail } from "@/lib/mailer/sendSystemNotificationEmail";
+import { sendCustomerOrderStatusEmail } from "@/lib/mailer/sendCustomerOrderStatusEmail";
 
 export async function createOrder(params: {
   customerDbUserId?: string;
@@ -105,6 +106,26 @@ export async function createOrder(params: {
       subject: "🛒 New Order Placed",
       message: `Order #${orderNumber} placed. Total: ${totalAmount}.`,
     });
+
+    // Send order confirmation email to customer
+    const customerEmail = params.shippingAddress?.email || params.guestInfo?.email;
+    const customerName = params.shippingAddress?.fullName || params.guestInfo?.name || "Customer";
+    if (customerEmail) {
+      await sendCustomerOrderStatusEmail({
+        recipientEmail: customerEmail,
+        recipientName: customerName,
+        orderNumber,
+        orderStatus: "pending",
+        items: params.items,
+        subtotal,
+        deliveryCharge: params.deliveryCharge,
+        discountAmount,
+        totalAmount,
+        paymentMethod: "COD",
+        shippingAddress: params.shippingAddress,
+        note: "Thank you for placing your order with QORVAN!",
+      });
+    }
 
     return {
       success: true,
@@ -243,12 +264,33 @@ export async function updateOrderStatus(
     });
 
     await order.save();
-if (["shipped", "delivered", "cancelled", "returned"].includes(newStatus)) {
-  await sendSystemNotificationEmail({
-    subject: `Order ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
-    message: `Order #${order.orderNumber} status changed to ${newStatus}.`,
-  });
-}
+
+    if (["shipped", "delivered", "cancelled", "returned", "confirmed", "processing"].includes(newStatus)) {
+      await sendSystemNotificationEmail({
+        subject: `Order ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
+        message: `Order #${order.orderNumber} status changed to ${newStatus}.`,
+      });
+    }
+
+    // Send status update email directly to customer
+    const customerEmail = order.shippingAddress?.email || order.guestInfo?.email;
+    const customerName = order.shippingAddress?.fullName || order.guestInfo?.name || "Customer";
+    if (customerEmail) {
+      await sendCustomerOrderStatusEmail({
+        recipientEmail: customerEmail,
+        recipientName: customerName,
+        orderNumber: order.orderNumber,
+        orderStatus: newStatus,
+        items: order.items || [],
+        subtotal: order.subtotal || 0,
+        deliveryCharge: order.deliveryCharge || 0,
+        discountAmount: order.discountAmount || 0,
+        totalAmount: order.totalAmount || 0,
+        paymentMethod: order.paymentMethod || "COD",
+        shippingAddress: order.shippingAddress,
+        note,
+      });
+    }
 
     revalidatePath("/dashboard/orders");
     revalidatePath(`/dashboard/orders/${orderId}`);
