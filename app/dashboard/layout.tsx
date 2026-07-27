@@ -22,10 +22,10 @@ export default async function DashboardLayout({
       <AdminSidebar access={access} />
       <Toaster />
       <main className="flex-1 h-screen mx-auto overflow-y-auto">
-        <div className="flex justify-between items-center p-4 w-full border-b text-white bg-primary">
-          <SidebarTrigger />
+        <div className="flex justify-between items-center px-5 py-3 w-full border-b border-neutral-200 bg-white">
+          <SidebarTrigger className="text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100" />
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium hidden md:inline">
+            <span className="text-sm font-medium hidden md:inline text-neutral-700">
               {access.name}
             </span>
             <Show when="signed-in">

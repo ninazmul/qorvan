@@ -15,10 +15,10 @@ export default function Footer() {
       return;
     }
     await fetch('/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    })
     toast.success('Subscribed successfully!');
     setEmail('');
   };
@@ -140,7 +140,7 @@ export default function Footer() {
 
       {/* Bottom Copyright Strip */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex flex-col sm:flex-row items-center justify-between text-[11px] text-zinc-500 font-medium">
-        <p>© {new Date().getFullYear()} QORVAN Luxury Brand. All Rights Reserved.</p>
+        <p>© {new Date().getFullYear()} <a href="/dashboard" target="_blank" className="hover:underline hover:text-black">QORVAN</a> Luxury Brand. All Rights Reserved.</p>
         <div className="flex items-center space-x-4 mt-3 sm:mt-0">
           <span className="hover:text-black transition cursor-pointer">Terms of Service</span>
           <span className="hover:text-black transition cursor-pointer">Privacy Policy</span>
