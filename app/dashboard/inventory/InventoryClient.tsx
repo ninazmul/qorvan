@@ -94,7 +94,7 @@ export default function InventoryClient({ initialProducts, currentPage }: { init
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full text-xs outline-none"
         />
-        <button onClick={exportCsv} className="ml-2 flex items-center gap-1 text-xs bg-blue-600 text-white px-2 py-1 rounded">
+        <button onClick={exportCsv} className="ml-2 flex items-center gap-1 px-4 py-2 text-xs font-semibold rounded-lg border border-gray-200 bg-white text-gray-700 hover:border-black hover:text-black transition shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
           <Download className="w-3 h-3" /> Export CSV
         </button>
       </div>

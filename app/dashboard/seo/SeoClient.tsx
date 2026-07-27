@@ -52,7 +52,7 @@ export default function SeoClient({ initialPages }: { initialPages: any[] }) {
   const domain = process.env.NEXT_PUBLIC_SERVER_URL || "https://qorvan.com";
 
   return (
-    <div className="space-y-6 max-w-5xl pb-12">
+    <div className="space-y-6 pb-10">
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <div>
