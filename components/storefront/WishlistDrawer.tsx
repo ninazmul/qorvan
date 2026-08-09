@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
@@ -24,6 +26,23 @@ export default function WishlistDrawer({
 }) {
   const { wishlistItems, removeFromWishlist, totalWishlist } = useWishlist();
   const { addToCart } = useCart();
+  const portalRef = useRef<Element | null>(null);
+
+  useEffect(() => {
+    portalRef.current = document.body;
+  }, []);
+
+  // Lock body scroll when open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
 
   const handleMoveToCart = (item: WishlistItem) => {
     addToCart({
@@ -39,15 +58,16 @@ export default function WishlistDrawer({
     toast.success("Moved to Shopping Bag!");
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !portalRef.current) return null;
 
-  return (
+  const drawer = (
     <div
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end"
+      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex justify-end"
       onClick={onClose}
     >
       <div
-        className="bg-white text-black w-full max-w-md h-full flex flex-col shadow-2xl border-l border-zinc-200"
+        className="bg-white text-black w-full max-w-md flex flex-col shadow-2xl border-l border-zinc-200"
+        style={{ height: "100dvh" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -66,14 +86,12 @@ export default function WishlistDrawer({
           </button>
         </div>
 
-        {/* Items List */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0">
+        {/* Items List — scrollable middle */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {wishlistItems.length === 0 ? (
             <div className="text-center py-16 space-y-3">
               <Heart className="w-12 h-12 text-zinc-300 mx-auto" />
-              <p className="text-sm text-zinc-600 font-medium">
-                Your wishlist is empty.
-              </p>
+              <p className="text-sm text-zinc-600 font-medium">Your wishlist is empty.</p>
               <p className="text-xs text-zinc-400">
                 Save items you love by clicking the heart icon on any product.
               </p>
@@ -94,7 +112,7 @@ export default function WishlistDrawer({
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-16 h-20 object-cover rounded border border-zinc-200 hover:opacity-90 transition"
+                    className="w-16 h-20 object-cover rounded border border-zinc-200 hover:opacity-90 transition flex-shrink-0"
                   />
                 </Link>
                 <div className="flex-1 flex flex-col justify-between min-w-0">
@@ -138,7 +156,7 @@ export default function WishlistDrawer({
           )}
         </div>
 
-        {/* Footer */}
+        {/* Footer — always pinned to bottom */}
         {wishlistItems.length > 0 && (
           <div className="p-5 border-t border-zinc-200 bg-white flex-shrink-0">
             <Link
@@ -153,4 +171,6 @@ export default function WishlistDrawer({
       </div>
     </div>
   );
+
+  return createPortal(drawer, document.body);
 }

@@ -1,21 +1,41 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
 import { ShoppingBag, X, Trash2, ArrowRight } from "lucide-react";
 
 export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { cart, updateQuantity, removeFromCart, subtotal, totalItems } = useCart();
+  const portalRef = useRef<Element | null>(null);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    portalRef.current = document.body;
+  }, []);
 
-  return (
+  // Lock body scroll when open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  if (!isOpen || !portalRef.current) return null;
+
+  const drawer = (
     <div
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end"
+      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex justify-end"
       onClick={onClose}
     >
       <div
-        className="bg-white text-black w-full max-w-md h-full flex flex-col shadow-2xl border-l border-zinc-200"
+        className="bg-white text-black w-full max-w-md flex flex-col shadow-2xl border-l border-zinc-200"
+        style={{ height: "100dvh" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
@@ -31,8 +51,8 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
           </button>
         </div>
 
-        {/* Cart Items List — flex-1 + min-h-0 ensures it shrinks and scrolls properly */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4 min-h-0">
+        {/* Cart Items — scrollable middle */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {cart.length === 0 ? (
             <div className="text-center py-16 space-y-3">
               <ShoppingBag className="w-12 h-12 text-zinc-400 mx-auto opacity-50" />
@@ -91,7 +111,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
           )}
         </div>
 
-        {/* Footer Checkout Summary — flex-shrink-0 keeps it always visible at bottom */}
+        {/* Footer — always pinned to bottom */}
         {cart.length > 0 && (
           <div className="p-5 border-t border-zinc-200 bg-white space-y-4 flex-shrink-0">
             <div className="flex justify-between text-sm">
@@ -122,4 +142,6 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
       </div>
     </div>
   );
+
+  return createPortal(drawer, document.body);
 }
