@@ -1,7 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { ShoppingBag, Heart, ShieldCheck, Truck, RotateCcw, Star, Check } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  ShoppingBag,
+  Heart,
+  ShieldCheck,
+  Truck,
+  RotateCcw,
+  Star,
+  Check,
+  ZoomIn,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 import { createReview } from "@/lib/actions/review.actions";
@@ -22,11 +34,18 @@ export default function ProductDetailClient({
   const { addToCart } = useCart();
   const { toggleWishlist, isWishlisted } = useWishlist();
 
-  const allImages = product.images && product.images.length > 0 ? product.images : [product.featuredImage];
-  const [activeImage, setActiveImage] = useState(allImages[0] || product.featuredImage);
+  const allImages =
+    product.images && product.images.length > 0
+      ? product.images
+      : [product.featuredImage];
+  const [activeImage, setActiveImage] = useState(
+    allImages[0] || product.featuredImage,
+  );
 
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || "");
-  const [selectedColor, setSelectedColor] = useState(product.colors?.[0]?.name || "");
+  const [selectedColor, setSelectedColor] = useState(
+    product.colors?.[0]?.name || "",
+  );
   const [quantity, setQuantity] = useState(1);
 
   // Review Form
@@ -35,6 +54,37 @@ export default function ProductDetailClient({
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
   const [submittingReview, setSubmittingReview] = useState(false);
+
+  // Image Zoom / Lightbox
+  const [zoomOpen, setZoomOpen] = useState(false);
+  const [zoomIndex, setZoomIndex] = useState(0);
+
+  useEffect(() => {
+    if (!zoomOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setZoomOpen(false);
+      else if (e.key === "ArrowLeft")
+        setZoomIndex((i) => (i - 1 + allImages.length) % allImages.length);
+      else if (e.key === "ArrowRight")
+        setZoomIndex((i) => (i + 1) % allImages.length);
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [zoomOpen, allImages.length]);
+
+  const openZoom = (src?: string) => {
+    const idx = src ? allImages.indexOf(src) : allImages.indexOf(activeImage);
+    setZoomIndex(idx >= 0 ? idx : 0);
+    setZoomOpen(true);
+  };
+  const closeZoom = () => setZoomOpen(false);
+  const goPrev = () =>
+    setZoomIndex((i) => (i - 1 + allImages.length) % allImages.length);
+  const goNext = () => setZoomIndex((i) => (i + 1) % allImages.length);
 
   const handleAddToCart = () => {
     addToCart({
@@ -69,7 +119,9 @@ export default function ProductDetailClient({
       });
 
       if (res.success) {
-        toast.success("Thank you! Your review has been submitted for moderation.");
+        toast.success(
+          "Thank you! Your review has been submitted for moderation.",
+        );
         setReviewName("");
         setReviewEmail("");
         setReviewComment("");
@@ -89,8 +141,26 @@ export default function ProductDetailClient({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         {/* Left Gallery */}
         <div className="space-y-4">
-          <div className="aspect-square bg-gray-100 rounded-3xl overflow-hidden border border-gray-200 shadow-md">
-            <img src={activeImage} alt={product.title} className="w-full h-full object-cover" />
+          <div className="group relative aspect-square bg-gray-100 rounded-3xl overflow-hidden border border-gray-200 shadow-md">
+            <img
+              src={activeImage}
+              alt={product.title}
+              className="w-full h-full object-cover"
+            />
+            <button
+              type="button"
+              onClick={() => openZoom(activeImage)}
+              aria-label="Zoom product image"
+              className="absolute inset-0 w-full h-full cursor-zoom-in"
+            />
+            <button
+              type="button"
+              onClick={() => openZoom(activeImage)}
+              className="pointer-events-auto absolute top-3 right-3 bg-white/95 hover:bg-white text-gray-800 border border-gray-200 backdrop-blur shadow-sm p-2 rounded-full transition translate-y-2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 flex items-center gap-1.5 text-[11px] font-bold"
+            >
+              <ZoomIn className="w-4 h-4" />
+              <span>Zoom</span>
+            </button>
           </div>
 
           {allImages.length > 1 && (
@@ -98,11 +168,32 @@ export default function ProductDetailClient({
               {allImages.map((img: string, idx: number) => (
                 <button
                   key={idx}
-                  onClick={() => setActiveImage(img)}
-                  className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition ${activeImage === img ? "border-amber-800 shadow" : "border-gray-200 opacity-70"
-                    }`}
+                  onClick={() => {
+                    setActiveImage(img);
+                  }}
+                  onDoubleClick={() => openZoom(img)}
+                  className={`group/thumb relative w-20 h-20 rounded-xl overflow-hidden border-2 transition shrink-0 ${
+                    activeImage === img
+                      ? "border-amber-800 shadow"
+                      : "border-gray-200 opacity-70 hover:opacity-100"
+                  }`}
                 >
-                  <img src={img} alt={`${product.title} view ${idx + 1}`} className="w-full h-full object-cover" />
+                  <img
+                    src={img}
+                    alt={`${product.title} view ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openZoom(img);
+                    }}
+                    aria-label={`Zoom view ${idx + 1}`}
+                    className="absolute inset-0 bg-black/0 group-hover/thumb:bg-black/30 flex items-center justify-center transition"
+                  >
+                    <ZoomIn className="w-4 h-4 text-white opacity-0 group-hover/thumb:opacity-100 drop-shadow" />
+                  </button>
                 </button>
               ))}
             </div>
@@ -124,14 +215,22 @@ export default function ProductDetailClient({
                   <Star key={i} className="w-4 h-4 fill-amber-500" />
                 ))}
               </div>
-              <span className="text-xs font-bold text-gray-700">{product.ratings?.average || 5.0}</span>
-              <span className="text-xs text-gray-400">({product.ratings?.count || 12} customer reviews)</span>
-              <span className="text-xs font-mono font-bold text-gray-900 border-l pl-2 ml-2">SKU: {product.sku}</span>
+              <span className="text-xs font-bold text-gray-700">
+                {product.ratings?.average || 5.0}
+              </span>
+              <span className="text-xs text-gray-400">
+                ({product.ratings?.count || 12} customer reviews)
+              </span>
+              <span className="text-xs font-mono font-bold text-gray-900 border-l pl-2 ml-2">
+                SKU: {product.sku}
+              </span>
             </div>
           </div>
 
           <div className="flex items-baseline gap-3 border-y py-4">
-            <span className="text-3xl font-black text-amber-950">৳{product.price?.toLocaleString()}</span>
+            <span className="text-3xl font-black text-amber-950">
+              ৳{product.price?.toLocaleString()}
+            </span>
             {product.compareAtPrice && (
               <span className="text-base text-gray-400 line-through">
                 ৳{product.compareAtPrice?.toLocaleString()}
@@ -142,21 +241,26 @@ export default function ProductDetailClient({
             </span>
           </div>
 
-          <p className="text-xs text-gray-600 leading-relaxed">{product.description}</p>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            {product.description}
+          </p>
 
           {/* Size Selector */}
           {product.sizes && product.sizes.length > 0 && (
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block">Select Size:</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block">
+                Select Size:
+              </label>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((s: string) => (
                   <button
                     key={s}
                     onClick={() => setSelectedSize(s)}
-                    className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${selectedSize === s
+                    className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${
+                      selectedSize === s
                         ? "bg-black text-amber-300 border-amber-950"
                         : "bg-white text-gray-700 border-gray-200 hover:border-amber-800"
-                      }`}
+                    }`}
                   >
                     {s}
                   </button>
@@ -168,7 +272,9 @@ export default function ProductDetailClient({
           {/* Color Selector */}
           {product.colors && product.colors.length > 0 && (
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block">Select Color:</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-gray-700 block">
+                Select Color:
+              </label>
               <div className="flex flex-wrap gap-2">
                 {product.colors.map((c: any) => {
                   const colorName = c.name || c;
@@ -176,10 +282,11 @@ export default function ProductDetailClient({
                     <button
                       key={colorName}
                       onClick={() => setSelectedColor(colorName)}
-                      className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${selectedColor === colorName
+                      className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${
+                        selectedColor === colorName
                           ? "bg-black text-amber-300 border-amber-950"
                           : "bg-white text-gray-700 border-gray-200 hover:border-amber-800"
-                        }`}
+                      }`}
                     >
                       {colorName}
                     </button>
@@ -199,7 +306,9 @@ export default function ProductDetailClient({
                 >
                   -
                 </button>
-                <span className="px-3 text-sm font-bold text-gray-900">{quantity}</span>
+                <span className="px-3 text-sm font-bold text-gray-900">
+                  {quantity}
+                </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
                   className="px-3 py-1 text-sm font-bold text-gray-700"
@@ -218,10 +327,17 @@ export default function ProductDetailClient({
               <button
                 onClick={() => {
                   toggleWishlist(product._id);
-                  toast.success(isWishlisted(product._id) ? "Removed from Wishlist" : "Saved to Wishlist");
+                  toast.success(
+                    isWishlisted(product._id)
+                      ? "Removed from Wishlist"
+                      : "Saved to Wishlist",
+                  );
                 }}
-                className={`p-3.5 rounded-xl border transition ${isWishlisted(product._id) ? "bg-black text-white border-amber-800" : "bg-white border-gray-300 text-gray-700"
-                  }`}
+                className={`p-3.5 rounded-xl border transition ${
+                  isWishlisted(product._id)
+                    ? "bg-black text-white border-amber-800"
+                    : "bg-white border-gray-300 text-gray-700"
+                }`}
               >
                 <Heart className="w-5 h-5 fill-current" />
               </button>
@@ -282,16 +398,23 @@ export default function ProductDetailClient({
 
       {/* Customer Reviews Section */}
       <div className="space-y-8 bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
-        <h3 className="text-lg font-bold font-serif text-gray-900 border-b pb-4">Customer Reviews</h3>
+        <h3 className="text-lg font-bold font-serif text-gray-900 border-b pb-4">
+          Customer Reviews
+        </h3>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Review List */}
           <div className="space-y-4">
             {reviews.length === 0 ? (
-              <p className="text-xs text-gray-500 italic">No reviews yet for this product. Be the first to leave a review!</p>
+              <p className="text-xs text-gray-500 italic">
+                No reviews yet for this product. Be the first to leave a review!
+              </p>
             ) : (
               reviews.map((r: any) => (
-                <div key={r._id} className="p-4 bg-gray-50 rounded-xl border space-y-1">
+                <div
+                  key={r._id}
+                  className="p-4 bg-gray-50 rounded-xl border space-y-1"
+                >
                   <div className="flex items-center justify-between text-xs font-bold text-gray-900">
                     <span>{r.authorName}</span>
                     <div className="flex text-amber-500">
@@ -307,7 +430,10 @@ export default function ProductDetailClient({
           </div>
 
           {/* Review Form */}
-          <form onSubmit={handleReviewSubmit} className="space-y-3 bg-black/5 p-5 rounded-2xl border border-amber-900/10 text-xs">
+          <form
+            onSubmit={handleReviewSubmit}
+            className="space-y-3 bg-black/5 p-5 rounded-2xl border border-amber-900/10 text-xs"
+          >
             <h4 className="font-bold text-gray-900">Write a Review</h4>
             <div className="grid grid-cols-2 gap-3">
               <input
@@ -345,6 +471,97 @@ export default function ProductDetailClient({
           </form>
         </div>
       </div>
+
+      {/* Image Zoom Lightbox */}
+      {zoomOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Zoomed product image"
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
+          onClick={closeZoom}
+        >
+          <button
+            type="button"
+            onClick={closeZoom}
+            aria-label="Close zoom view"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/90 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 rounded-full p-2.5 transition"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              goPrev();
+            }}
+            aria-label="Previous image"
+            disabled={allImages.length <= 1}
+            className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 text-white/90 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 rounded-full p-2.5 transition disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              goNext();
+            }}
+            aria-label="Next image"
+            disabled={allImages.length <= 1}
+            className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 text-white/90 hover:text-white bg-white/10 hover:bg-white/20 backdrop-blur border border-white/20 rounded-full p-2.5 transition disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
+          <div
+            className="relative max-w-6xl w-full max-h-[90vh] flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative w-full flex-1 flex items-center justify-center">
+              <img
+                src={allImages[zoomIndex] || activeImage}
+                alt={`${product.title} - detail view ${zoomIndex + 1}`}
+                className="max-w-full max-h-[78vh] object-contain rounded-xl select-none"
+                draggable={false}
+              />
+            </div>
+
+            {allImages.length > 1 && (
+              <div className="mt-4 flex flex-col items-center gap-3 w-full max-w-4xl">
+                <div className="text-xs font-semibold text-white/80 tracking-wider uppercase">
+                  {zoomIndex + 1} / {allImages.length}
+                </div>
+                <div className="flex gap-2 overflow-x-auto w-full justify-center pb-1 px-2">
+                  {allImages.map((img: string, idx: number) => (
+                    <button
+                      key={idx}
+                      onClick={() => setZoomIndex(idx)}
+                      aria-label={`View image ${idx + 1}`}
+                      className={`w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-lg overflow-hidden border-2 transition ${
+                        idx === zoomIndex
+                          ? "border-amber-400 scale-105"
+                          : "border-white/20 opacity-60 hover:opacity-100"
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt={`Thumbnail ${idx + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <p className="sr-only">
+              Press Escape to close. Use Left and Right arrow keys to navigate.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
