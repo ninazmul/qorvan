@@ -173,8 +173,8 @@ export default function ProductDetailClient({
                   }}
                   onDoubleClick={() => openZoom(img)}
                   className={`group/thumb relative w-20 h-20 rounded-xl overflow-hidden border-2 transition shrink-0 ${activeImage === img
-                      ? "border-amber-800 shadow"
-                      : "border-gray-200 opacity-70 hover:opacity-100"
+                    ? "border-amber-800 shadow"
+                    : "border-gray-200 opacity-70 hover:opacity-100"
                     }`}
                 >
                   <img
@@ -209,20 +209,23 @@ export default function ProductDetailClient({
               {product.title}
             </h1>
             <div className="flex items-center gap-2 mt-2">
-              <div className="flex text-amber-500">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-amber-500" />
-                ))}
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="flex items-center gap-1 text-amber-500">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-amber-500" />
+                  ))}
+                  <span className="text-xs font-bold text-gray-700">
+                    {product.ratings?.average || 5.0}
+                  </span>
+                </div>
+
+                <div className="text-xs text-gray-400">
+                  ({product.ratings?.count || 12} customer reviews)
+                </div>
               </div>
-              <span className="text-xs font-bold text-gray-700">
-                {product.ratings?.average || 5.0}
-              </span>
-              <span className="text-xs text-gray-400">
-                ({product.ratings?.count || 12} customer reviews)
-              </span>
-              <span className="text-xs font-mono font-bold text-gray-900 border-l pl-2 ml-2">
+              <div className="min-w-fit text-xs font-mono font-bold text-gray-900 border-l pl-2 ml-2">
                 SKU: {product.sku}
-              </span>
+              </div>
             </div>
           </div>
 
@@ -256,8 +259,8 @@ export default function ProductDetailClient({
                     key={s}
                     onClick={() => setSelectedSize(s)}
                     className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${selectedSize === s
-                        ? "bg-black text-amber-300 border-amber-950"
-                        : "bg-white text-gray-700 border-gray-200 hover:border-amber-800"
+                      ? "bg-black text-white border-black"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-black"
                       }`}
                   >
                     {s}
@@ -281,8 +284,8 @@ export default function ProductDetailClient({
                       key={colorName}
                       onClick={() => setSelectedColor(colorName)}
                       className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${selectedColor === colorName
-                          ? "bg-black text-amber-300 border-amber-950"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-amber-800"
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-gray-700 border-gray-200 hover:border-black"
                         }`}
                     >
                       {colorName}
@@ -316,7 +319,7 @@ export default function ProductDetailClient({
 
               <button
                 onClick={handleAddToCart}
-                className="flex-1 py-3.5 bg-black hover:bg-black text-amber-300 font-bold text-xs uppercase tracking-widest rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
+                className="flex-1 py-3.5 bg-black hover:bg-black text-white font-bold text-xs uppercase tracking-widest rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
               >
                 <ShoppingBag className="w-4 h-4" /> Add to Cart
               </button>
@@ -335,8 +338,8 @@ export default function ProductDetailClient({
                   toast.success(wishlisted ? "Removed from Wishlist" : "Saved to Wishlist!");
                 }}
                 className={`p-3.5 rounded-xl border transition ${isWishlisted(product._id)
-                    ? "bg-black text-white border-amber-800"
-                    : "bg-white border-gray-300 text-gray-700"
+                  ? "bg-black text-white border-amber-800"
+                  : "bg-white border-gray-300 text-gray-700"
                   }`}
               >
                 <Heart className="w-5 h-5 fill-current" />
@@ -345,14 +348,14 @@ export default function ProductDetailClient({
 
             <button
               onClick={handleBuyNow}
-              className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-bold text-xs uppercase tracking-widest rounded-xl transition shadow-md"
+              className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-extrabold text-xs uppercase tracking-widest rounded-xl transition shadow-md"
             >
               Buy Now (Cash on Delivery)
             </button>
           </div>
 
           {/* Guarantee Icons */}
-          <div className="grid grid-cols-3 gap-3 border-t pt-4 text-[11px] font-semibold text-gray-600">
+          <div className="flex flex-wrap justify-center gap-3 border-t pt-4 text-[11px] font-semibold text-gray-600">
             <div className="flex items-center gap-1.5">
               <Truck className="w-4 h-4 text-gray-800" />
               <span>Dhaka & BD Express</span>
@@ -540,8 +543,8 @@ export default function ProductDetailClient({
                       onClick={() => setZoomIndex(idx)}
                       aria-label={`View image ${idx + 1}`}
                       className={`w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-lg overflow-hidden border-2 transition ${idx === zoomIndex
-                          ? "border-amber-400 scale-105"
-                          : "border-white/20 opacity-60 hover:opacity-100"
+                        ? "border-amber-400 scale-105"
+                        : "border-white/20 opacity-60 hover:opacity-100"
                         }`}
                     >
                       <img
