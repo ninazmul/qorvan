@@ -130,7 +130,7 @@ export default async function ShopPage({
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd) }}
@@ -139,6 +139,7 @@ export default async function ShopPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
       {/* Top Banner Header */}
       <div className="bg-black text-white p-8 sm:p-12 rounded-3xl border border-gray-200 relative overflow-hidden shadow-xl">
         <div className="relative z-10 max-w-xl space-y-3">
@@ -224,5 +225,6 @@ export default async function ShopPage({
         </div>
       </div>
     </div>
+  </>
   );
 }

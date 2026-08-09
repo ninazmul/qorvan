@@ -200,12 +200,13 @@ export default async function HomePage() {
   };
 
   return (
-    <div className="space-y-20 pb-20">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageItemListJsonLd) }}
       />
-      {/* Hero Banner Section */}
+      <div className="space-y-20 pb-20">
+        {/* Hero Banner Section */}
       <section className="relative bg-black text-white overflow-hidden border-b border-zinc-200">
         <div className="absolute inset-0 z-0">
           <img
@@ -354,5 +355,6 @@ export default async function HomePage() {
       {/* Customer Testimonials + Review Form */}
       <TestimonialsSection reviews={approvedReviews} products={reviewProducts} />
     </div>
+  </>
   );
 }
