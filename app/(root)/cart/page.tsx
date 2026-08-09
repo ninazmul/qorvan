@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import { validateCoupon } from "@/lib/actions/coupon.actions";
-import { ShoppingBag, Trash2, ArrowRight, Ticket, Truck } from "lucide-react";
+import { ShoppingBag, Trash2, ArrowRight, Ticket, Truck, X } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 export default function CartPage() {
@@ -12,6 +12,17 @@ export default function CartPage() {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponLoading, setCouponLoading] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("qorvan_applied_coupon");
+      if (saved) {
+        setAppliedCoupon(JSON.parse(saved));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
 
   const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +33,7 @@ export default function CartPage() {
       const res = await validateCoupon(couponCode, subtotal);
       if (res.success && res.data) {
         setAppliedCoupon(res.data);
+        localStorage.setItem("qorvan_applied_coupon", JSON.stringify(res.data));
         toast.success(`Coupon ${res.data.code} applied successfully!`);
       } else {
         toast.error(res.error || "Invalid coupon");
@@ -33,18 +45,25 @@ export default function CartPage() {
     }
   };
 
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    localStorage.removeItem("qorvan_applied_coupon");
+    toast.success("Coupon removed");
+  };
+
   const discountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0;
   const finalTotal = Math.max(0, subtotal - discountAmount);
 
   if (cart.length === 0) {
     return (
       <div className="max-w-4xl mx-auto py-24 px-4 text-center space-y-4">
-        <ShoppingBag className="w-16 h-16 text-gray-800 mx-auto opacity-50" />
-        <h1 className="text-2xl font-bold font-serif text-amber-950">Your Shopping Bag is Empty</h1>
+        <ShoppingBag className="w-16 h-16 text-zinc-400 mx-auto opacity-50" />
+        <h1 className="text-2xl font-bold font-serif text-gray-900">Your Shopping Bag is Empty</h1>
         <p className="text-xs text-gray-500">Discover QORVAN's luxury fashion and leather creations.</p>
         <Link
           href="/shop"
-          className="inline-block py-3 px-6 bg-black text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-black transition"
+          className="inline-block py-3 px-6 bg-black text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition"
         >
           Explore Catalog
         </Link>
@@ -79,25 +98,25 @@ export default function CartPage() {
                   <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
                   <div className="text-xs text-gray-500 font-mono">SKU: {item.sku}</div>
                   {item.size && <div className="text-xs text-gray-900 font-medium">Size: {item.size}</div>}
-                  <div className="text-sm font-black text-amber-950">৳{item.price.toLocaleString()}</div>
+                  <div className="text-sm font-black text-gray-900">৳{item.price.toLocaleString()}</div>
                   {/* Quantity Controls */}
                   <div className="flex items-center gap-3">
                     <div className="flex items-center border rounded-xl bg-gray-50 p-1">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="px-2 py-1 text-xs font-bold text-gray-700"
+                        className="px-2 py-1 text-xs font-bold text-gray-700 hover:bg-zinc-200 rounded"
                       >
                         -
                       </button>
                       <span className="px-3 text-xs font-bold text-gray-900">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        className="px-2 py-1 text-xs font-bold text-gray-700"
+                        className="px-2 py-1 text-xs font-bold text-gray-700 hover:bg-zinc-200 rounded"
                       >
                         +
                       </button>
                     </div>
-                    <button onClick={() => removeFromCart(item.id)} className="p-2 text-gray-400 hover:text-rose-600">
+                    <button onClick={() => removeFromCart(item.id)} className="p-2 text-gray-400 hover:text-rose-600 transition">
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -134,10 +153,15 @@ export default function CartPage() {
 
               {appliedCoupon && (
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-emerald-400 flex items-center gap-1.5">
+                  <span className="text-emerald-400 flex items-center gap-1.5 font-bold">
                     <Ticket className="w-3.5 h-3.5" /> {appliedCoupon.code}
                   </span>
-                  <span className="font-bold text-emerald-400">-৳{discountAmount.toLocaleString()}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-emerald-400">-৳{discountAmount.toLocaleString()}</span>
+                    <button onClick={handleRemoveCoupon} className="text-zinc-400 hover:text-rose-400">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
 import { getDeliveryZones } from "@/lib/actions/delivery.actions";
 import { createOrder } from "@/lib/actions/order.actions";
-import { ShieldCheck, Truck, ShoppingBag, Check } from "lucide-react";
+import { validateCoupon } from "@/lib/actions/coupon.actions";
+import { ShieldCheck, Truck, ShoppingBag, Check, Ticket, X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -15,6 +16,11 @@ export default function CheckoutPage() {
   const [deliveryZones, setDeliveryZones] = useState<any[]>([]);
   const [selectedZone, setSelectedZone] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+
+  // Coupon State
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
 
   // Form Fields
   const [fullName, setFullName] = useState("");
@@ -34,7 +40,45 @@ export default function CheckoutPage() {
       }
     }
     loadZones();
+
+    // Check for saved coupon from Cart
+    try {
+      const savedCoupon = localStorage.getItem("qorvan_applied_coupon");
+      if (savedCoupon) {
+        setAppliedCoupon(JSON.parse(savedCoupon));
+      }
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
+
+  const handleApplyCoupon = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!couponInput.trim()) return;
+    setCouponLoading(true);
+
+    try {
+      const res = await validateCoupon(couponInput.trim(), subtotal);
+      if (res.success && res.data) {
+        setAppliedCoupon(res.data);
+        localStorage.setItem("qorvan_applied_coupon", JSON.stringify(res.data));
+        toast.success(`Coupon ${res.data.code} applied!`);
+        setCouponInput("");
+      } else {
+        toast.error(res.error || "Invalid coupon");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Error validating coupon");
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    localStorage.removeItem("qorvan_applied_coupon");
+    toast.success("Coupon removed");
+  };
 
   const deliveryCharge = selectedZone
     ? selectedZone.freeDeliveryThreshold && subtotal >= selectedZone.freeDeliveryThreshold
@@ -42,7 +86,8 @@ export default function CheckoutPage() {
       : selectedZone.baseCharge
     : 80;
 
-  const totalPayable = subtotal + deliveryCharge;
+  const discountAmount = appliedCoupon ? appliedCoupon.discountAmount || 0 : 0;
+  const totalPayable = Math.max(0, subtotal + deliveryCharge - discountAmount);
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +118,8 @@ export default function CheckoutPage() {
           zoneName: selectedZone?.name || "Dhaka City",
         },
         deliveryCharge,
+        discountAmount,
+        couponCode: appliedCoupon ? appliedCoupon.code : undefined,
         subtotal,
         totalAmount: totalPayable,
         notes,
@@ -82,6 +129,7 @@ export default function CheckoutPage() {
 
       if (res.success && res.data) {
         toast.success("Order Placed Successfully!");
+        localStorage.removeItem("qorvan_applied_coupon");
         clearCart();
         router.push(`/order/${res.data._id}`);
       } else {
@@ -97,7 +145,7 @@ export default function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <div className="max-w-4xl mx-auto py-24 px-4 text-center space-y-4">
-        <ShoppingBag className="w-16 h-16 text-gray-800 mx-auto opacity-40" />
+        <ShoppingBag className="w-16 h-16 text-zinc-400 mx-auto opacity-40" />
         <h1 className="text-2xl font-bold font-serif text-gray-900">Your Cart is Empty</h1>
         <p className="text-xs text-gray-500">Add items to your bag before checking out.</p>
         <Link
@@ -266,7 +314,7 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Order Items Preview */}
+          {/* Section 3: Review Items */}
           <div className="bg-white rounded-3xl border border-zinc-200 p-6 sm:p-8 shadow-sm space-y-4">
             <h2 className="text-sm font-extrabold uppercase tracking-[0.15em] text-gray-900 border-b border-zinc-100 pb-3 flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-black text-white text-[10px] font-black flex items-center justify-center flex-shrink-0">3</span>
@@ -323,6 +371,20 @@ export default function CheckoutPage() {
                   {deliveryCharge === 0 ? "FREE" : `৳${deliveryCharge}`}
                 </span>
               </div>
+
+              {appliedCoupon && (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-emerald-400 flex items-center gap-1.5 font-bold">
+                    <Ticket className="w-3.5 h-3.5" /> {appliedCoupon.code}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-emerald-400">-৳{discountAmount.toLocaleString()}</span>
+                    <button type="button" onClick={handleRemoveCoupon} className="text-zinc-400 hover:text-rose-400">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Total */}
@@ -330,6 +392,32 @@ export default function CheckoutPage() {
               <span className="text-base font-extrabold text-white uppercase tracking-wider">Total</span>
               <span className="text-2xl font-black text-white">৳{totalPayable.toLocaleString()}</span>
             </div>
+
+            {/* Coupon Code Input */}
+            {!appliedCoupon && (
+              <div className="space-y-2 pt-2 border-t border-zinc-800">
+                <label className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider block">
+                  Have a Coupon Code?
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponInput}
+                    onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                    placeholder="ENTER CODE"
+                    className="flex-1 px-3 py-2.5 text-xs bg-zinc-900 border border-zinc-700 focus:border-white text-white placeholder-zinc-600 rounded-lg uppercase font-mono outline-none transition"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApplyCoupon}
+                    disabled={couponLoading}
+                    className="px-4 py-2.5 bg-white text-black font-extrabold text-xs uppercase tracking-wider rounded-lg hover:bg-zinc-200 transition disabled:opacity-50"
+                  >
+                    {couponLoading ? "..." : "Apply"}
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* COD Badge */}
             <div className="bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 space-y-1">

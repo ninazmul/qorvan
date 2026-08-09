@@ -1,6 +1,6 @@
 import { getOrderById } from "@/lib/actions/order.actions";
 import Link from "next/link";
-import { CheckCircle, Truck, Package, MapPin, ShoppingBag, ArrowRight } from "lucide-react";
+import { CheckCircle, Truck, Package, MapPin, ShoppingBag, Ticket } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -164,6 +164,15 @@ export default async function CustomerOrderConfirmationPage({
                   {order.deliveryCharge === 0 ? "FREE" : `৳${order.deliveryCharge}`}
                 </span>
               </div>
+
+              {order.discountAmount > 0 && (
+                <div className="flex justify-between text-emerald-400 font-bold">
+                  <span className="flex items-center gap-1">
+                    <Ticket className="w-3.5 h-3.5" /> Discount ({order.couponCode || "Promo"}):
+                  </span>
+                  <span>-৳{order.discountAmount.toLocaleString()}</span>
+                </div>
+              )}
             </div>
 
             <div className="border-t border-zinc-800 pt-4 flex items-center justify-between">
