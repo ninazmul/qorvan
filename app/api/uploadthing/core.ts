@@ -9,7 +9,7 @@ const f = createUploadthing();
 
 export const ourFileRouter = {
   mediaUploader: f({
-    image: { maxFileSize: "8MB" },
+    image: { maxFileSize: "8MB", maxFileCount: 20 },
   })
     .input(z.object({ folder: z.string().optional() }))
     .middleware(async ({ req, input }) => {

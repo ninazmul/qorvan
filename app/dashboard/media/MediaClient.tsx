@@ -141,8 +141,9 @@ export default function MediaClient({
     }
   };
 
-  const handleUploadComplete = () => {
-    toast.success("Uploads finished.");
+  const handleUploadComplete = (res: any[]) => {
+    const count = Array.isArray(res) ? res.length : 1;
+    toast.success(`${count} file(s) uploaded successfully.`);
     setIsUploadOpen(false);
     fetchItems();
   };

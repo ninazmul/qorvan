@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -22,21 +23,36 @@ import { getMediaItems, getDistinctFolders } from "@/lib/actions/media.actions";
 import { IMedia } from "@/lib/database/models/media.model";
 import Image from "next/image";
 import Loader from "@/components/shared/Loader";
-import { FileText, Search } from "lucide-react";
+import { FileText, Search, CheckCircle2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
-interface MediaLibraryModalProps {
+type MediaLibraryModalMode = "single" | "multi";
+
+interface MediaLibraryModalBaseProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelect: (url: string) => void;
-  allowedTypes?: string[]; // e.g. ["image", "pdf"]
+  allowedTypes?: string[];
 }
 
-export default function MediaLibraryModal({
-  open,
-  onOpenChange,
-  onSelect,
-}: MediaLibraryModalProps) {
+interface SingleSelectProps extends MediaLibraryModalBaseProps {
+  mode?: "single";
+  onSelect: (url: string) => void;
+  initialSelection?: never;
+}
+
+interface MultiSelectProps extends MediaLibraryModalBaseProps {
+  mode: "multi";
+  onSelect: (urls: string[]) => void;
+  initialSelection?: string[];
+}
+
+type MediaLibraryModalProps = SingleSelectProps | MultiSelectProps;
+
+export default function MediaLibraryModal(props: MediaLibraryModalProps) {
+  const { open, onOpenChange, allowedTypes } = props;
+  const mode: MediaLibraryModalMode =
+    (props as any).mode === "multi" ? "multi" : "single";
+
   const [items, setItems] = useState<IMedia[]>([]);
   const [folders, setFolders] = useState<string[]>(["Root"]);
   const [selectedFolder, setSelectedFolder] = useState<string>("All");
@@ -44,10 +60,18 @@ export default function MediaLibraryModal({
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("browse");
 
-  // Filter to only show image files
+  const [multiSelection, setMultiSelection] = useState<Set<string>>(new Set());
+
   const filteredItems = items.filter((item) =>
     item.mimeType?.startsWith("image/"),
   );
+
+  useEffect(() => {
+    if (open && mode === "multi") {
+      const initial = (props as MultiSelectProps).initialSelection || [];
+      setMultiSelection(new Set(initial));
+    }
+  }, [open, mode]);
 
   const fetchMedia = async () => {
     setIsLoading(true);
@@ -74,10 +98,38 @@ export default function MediaLibraryModal({
     }
   }, [open, selectedFolder, searchQuery]);
 
-  const handleUploadComplete = () => {
-    toast.success("File uploaded successfully.");
+  const handleUploadComplete = (res: any[]) => {
+    const count = Array.isArray(res) ? res.length : 1;
+    toast.success(`${count} file(s) uploaded successfully.`);
     setActiveTab("browse");
     fetchMedia();
+  };
+
+  const toggleMultiSelect = (url: string) => {
+    setMultiSelection((prev) => {
+      const next = new Set(prev);
+      if (next.has(url)) {
+        next.delete(url);
+      } else {
+        next.add(url);
+      }
+      return next;
+    });
+  };
+
+  const handleConfirmMultiSelect = () => {
+    const urls = Array.from(multiSelection);
+    (props as MultiSelectProps).onSelect(urls);
+    onOpenChange(false);
+  };
+
+  const handleClearMultiSelection = () => {
+    setMultiSelection(new Set());
+  };
+
+  const handleSingleItemClick = (url: string) => {
+    (props as SingleSelectProps).onSelect(url);
+    onOpenChange(false);
   };
 
   return (
@@ -86,6 +138,11 @@ export default function MediaLibraryModal({
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-gray-800">
             Media Library
+            {mode === "multi" && (
+              <span className="ml-2 text-sm font-normal text-gray-500">
+                (Multi-select: {multiSelection.size} selected)
+              </span>
+            )}
           </DialogTitle>
         </DialogHeader>
 
@@ -103,7 +160,6 @@ export default function MediaLibraryModal({
             value="browse"
             className="flex-1 flex flex-col overflow-hidden min-h-0"
           >
-            {/* Filter controls */}
             <div className="flex gap-3 mb-4">
               <div className="relative flex-1">
                 <Search className="absolute left-2.5 top-2.5 h-4.5 w-4.5 text-gray-500" />
@@ -127,9 +183,18 @@ export default function MediaLibraryModal({
                   ))}
                 </SelectContent>
               </Select>
+              {mode === "multi" && multiSelection.size > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClearMultiSelection}
+                  className="shrink-0"
+                >
+                  Clear
+                </Button>
+              )}
             </div>
 
-            {/* Assets Grid */}
             <div className="flex-1 overflow-y-auto min-h-0 border rounded-lg bg-gray-50 p-4">
               {isLoading ? (
                 <Loader label="Loading library assets..." />
@@ -141,14 +206,20 @@ export default function MediaLibraryModal({
                 <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-4">
                   {filteredItems.map((item) => {
                     const isImage = item.mimeType?.startsWith("image/");
+                    const isSelected = multiSelection.has(item.url);
                     return (
                       <div
                         key={item._id.toString()}
-                        className="group relative cursor-pointer border rounded-lg bg-white overflow-hidden hover:shadow-md transition aspect-square"
                         onClick={() => {
-                          onSelect(item.url);
-                          onOpenChange(false);
+                          if (mode === "multi") {
+                            toggleMultiSelect(item.url);
+                          } else {
+                            handleSingleItemClick(item.url);
+                          }
                         }}
+                        className={`group relative cursor-pointer border rounded-lg bg-white overflow-hidden hover:shadow-md transition aspect-square ${
+                          isSelected ? "ring-2 ring-primary ring-offset-2" : ""
+                        }`}
                       >
                         {isImage ? (
                           <div className="relative w-full h-full">
@@ -168,17 +239,58 @@ export default function MediaLibraryModal({
                             </span>
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
-                          <Button size="sm" variant="secondary">
-                            Select Asset
-                          </Button>
-                        </div>
+
+                        {mode === "multi" ? (
+                          <div className="absolute top-2 left-2">
+                            <Checkbox
+                              checked={isSelected}
+                              onCheckedChange={() => toggleMultiSelect(item.url)}
+                              onClick={(e) => e.stopPropagation()}
+                              className="bg-white border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:text-white"
+                            />
+                          </div>
+                        ) : (
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                            <Button size="sm" variant="secondary">
+                              Select Asset
+                            </Button>
+                          </div>
+                        )}
+
+                        {isSelected && mode === "multi" && (
+                          <div className="absolute top-2 right-2">
+                            <CheckCircle2 className="w-5 h-5 text-white drop-shadow" />
+                          </div>
+                        )}
                       </div>
                     );
                   })}
                 </div>
               )}
             </div>
+
+            {mode === "multi" && (
+              <div className="mt-4 pt-4 border-t flex items-center justify-between gap-4">
+                <p className="text-sm text-gray-600">
+                  <span className="font-semibold">{multiSelection.size}</span>{" "}
+                  image{multiSelection.size === 1 ? "" : "s"} selected
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleConfirmMultiSelect}
+                    disabled={multiSelection.size === 0}
+                  >
+                    Confirm Selection
+                  </Button>
+                </div>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent
@@ -207,6 +319,10 @@ export default function MediaLibraryModal({
                     </SelectContent>
                   </Select>
                 </div>
+
+                <p className="text-xs text-gray-500 mb-4">
+                  You may select up to 20 images at once (8MB max per image).
+                </p>
 
                 <UploadDropzone
                   endpoint="mediaUploader"

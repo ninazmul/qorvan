@@ -42,8 +42,10 @@ export async function getProducts(params?: {
 
     if (params?.isFeatured !== undefined) filter.isFeatured = params.isFeatured;
     if (params?.isTrending !== undefined) filter.isTrending = params.isTrending;
-    if (params?.isNewArrival !== undefined) filter.isNewArrival = params.isNewArrival;
-    if (params?.isBestSeller !== undefined) filter.isBestSeller = params.isBestSeller;
+    if (params?.isNewArrival !== undefined)
+      filter.isNewArrival = params.isNewArrival;
+    if (params?.isBestSeller !== undefined)
+      filter.isBestSeller = params.isBestSeller;
 
     if (params?.minPrice !== undefined || params?.maxPrice !== undefined) {
       filter.price = {};
@@ -52,22 +54,30 @@ export async function getProducts(params?: {
     }
 
     if (params?.category) {
-      const catObj = await Category.findOne({ slug: params.category }).select("_id").lean();
+      const catObj = await Category.findOne({ slug: params.category })
+        .select("_id")
+        .lean();
       if (catObj) filter.category = catObj._id;
     }
 
     if (params?.subcategory) {
-      const subCatObj = await Category.findOne({ slug: params.subcategory }).select("_id").lean();
+      const subCatObj = await Category.findOne({ slug: params.subcategory })
+        .select("_id")
+        .lean();
       if (subCatObj) filter.subcategory = subCatObj._id;
     }
 
     if (params?.collection) {
-      const colObj = await Collection.findOne({ slug: params.collection }).select("_id").lean();
+      const colObj = await Collection.findOne({ slug: params.collection })
+        .select("_id")
+        .lean();
       if (colObj) filter.collectionId = colObj._id;
     }
 
     if (params?.brand) {
-      const brandObj = await Brand.findOne({ slug: params.brand }).select("_id").lean();
+      const brandObj = await Brand.findOne({ slug: params.brand })
+        .select("_id")
+        .lean();
       if (brandObj) filter.brandId = brandObj._id;
     }
 
@@ -85,7 +95,8 @@ export async function getProducts(params?: {
     if (params?.sort === "price-asc") sortOptions = { price: 1 };
     if (params?.sort === "price-desc") sortOptions = { price: -1 };
     if (params?.sort === "rating") sortOptions = { "ratings.average": -1 };
-    if (params?.sort === "popular") sortOptions = { isBestSeller: -1, isTrending: -1 };
+    if (params?.sort === "popular")
+      sortOptions = { isBestSeller: -1, isTrending: -1 };
 
     const [products, total] = await Promise.all([
       Product.find(filter)
@@ -110,7 +121,10 @@ export async function getProducts(params?: {
       },
     };
   } catch (error: any) {
-    return { success: false, error: error.message || "Failed to fetch products" };
+    return {
+      success: false,
+      error: error.message || "Failed to fetch products",
+    };
   }
 }
 
@@ -128,11 +142,18 @@ export async function getProductBySlug(slug: string) {
 
     return { success: true, data: JSON.parse(JSON.stringify(product)) };
   } catch (error: any) {
-    return { success: false, error: error.message || "Failed to fetch product" };
+    return {
+      success: false,
+      error: error.message || "Failed to fetch product",
+    };
   }
 }
 
-export async function getRelatedProducts(categoryId: string, currentProductId: string, limit = 4) {
+export async function getRelatedProducts(
+  categoryId: string,
+  currentProductId: string,
+  limit = 4,
+) {
   try {
     await connectToDatabase();
     const products = await Product.find({
@@ -146,7 +167,10 @@ export async function getRelatedProducts(categoryId: string, currentProductId: s
 
     return { success: true, data: JSON.parse(JSON.stringify(products)) };
   } catch (error: any) {
-    return { success: false, error: error.message || "Failed to fetch related products" };
+    return {
+      success: false,
+      error: error.message || "Failed to fetch related products",
+    };
   }
 }
 
@@ -154,7 +178,24 @@ export async function createProduct(params: any) {
   await requirePermission("products", "create");
   try {
     await connectToDatabase();
-    const newProduct = await Product.create(params);
+
+    const normalizedParams = { ...params };
+    if (normalizedParams.images !== undefined) {
+      if (Array.isArray(normalizedParams.images)) {
+        normalizedParams.images = normalizedParams.images.filter(
+          (url: any) => typeof url === "string" && url.trim().length > 0,
+        );
+      } else if (typeof normalizedParams.images === "string") {
+        normalizedParams.images = normalizedParams.images
+          .split(",")
+          .map((s: string) => s.trim())
+          .filter(Boolean);
+      } else {
+        normalizedParams.images = [];
+      }
+    }
+
+    const newProduct = await Product.create(normalizedParams);
 
     revalidatePath("/shop");
     revalidatePath("/dashboard/products");
@@ -162,7 +203,10 @@ export async function createProduct(params: any) {
 
     return { success: true, data: JSON.parse(JSON.stringify(newProduct)) };
   } catch (error: any) {
-    return { success: false, error: error.message || "Failed to create product" };
+    return {
+      success: false,
+      error: error.message || "Failed to create product",
+    };
   }
 }
 
@@ -170,9 +214,30 @@ export async function updateProduct(id: string, params: any) {
   await requirePermission("products", "update");
   try {
     await connectToDatabase();
-    const updatedProduct = await Product.findByIdAndUpdate(id, params, {
-      new: true,
-    });
+
+    const normalizedParams = { ...params };
+    if (normalizedParams.images !== undefined) {
+      if (Array.isArray(normalizedParams.images)) {
+        normalizedParams.images = normalizedParams.images.filter(
+          (url: any) => typeof url === "string" && url.trim().length > 0,
+        );
+      } else if (typeof normalizedParams.images === "string") {
+        normalizedParams.images = normalizedParams.images
+          .split(",")
+          .map((s: string) => s.trim())
+          .filter(Boolean);
+      } else {
+        normalizedParams.images = [];
+      }
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      normalizedParams,
+      {
+        new: true,
+      },
+    );
 
     if (!updatedProduct) return { success: false, error: "Product not found" };
 
@@ -183,7 +248,10 @@ export async function updateProduct(id: string, params: any) {
 
     return { success: true, data: JSON.parse(JSON.stringify(updatedProduct)) };
   } catch (error: any) {
-    return { success: false, error: error.message || "Failed to update product" };
+    return {
+      success: false,
+      error: error.message || "Failed to update product",
+    };
   }
 }
 
@@ -199,7 +267,10 @@ export async function deleteProduct(id: string) {
 
     return { success: true };
   } catch (error: any) {
-    return { success: false, error: error.message || "Failed to delete product" };
+    return {
+      success: false,
+      error: error.message || "Failed to delete product",
+    };
   }
 }
 
@@ -224,6 +295,9 @@ export async function updateInventoryStock(id: string, stock: number) {
 
     return { success: true, data: JSON.parse(JSON.stringify(updatedProduct)) };
   } catch (error: any) {
-    return { success: false, error: error.message || "Failed to update inventory stock" };
+    return {
+      success: false,
+      error: error.message || "Failed to update inventory stock",
+    };
   }
 }

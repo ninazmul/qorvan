@@ -16,9 +16,14 @@ import {
   Sparkles,
   Package,
 } from "lucide-react";
-import { createProduct, updateProduct, deleteProduct } from "@/lib/actions/product.actions";
+import {
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from "@/lib/actions/product.actions";
 import { toast } from "react-hot-toast";
 import ImageUploader from "@/components/shared/ImageUploader";
+import MultiImageUploader from "@/components/shared/MultiImageUploader";
 import Link from "next/link";
 
 interface ProductManagerClientProps {
@@ -51,7 +56,7 @@ export default function ProductManagerClient({
     price: "",
     compareAtPrice: "",
     featuredImage: "",
-    images: "",
+    images: [] as string[],
     sku: "",
     stock: "10",
     lowStockThreshold: "5",
@@ -81,7 +86,9 @@ export default function ProductManagerClient({
       p.sku.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCat =
       !selectedCategory ||
-      (typeof p.category === "object" ? p.category?._id === selectedCategory : p.category === selectedCategory);
+      (typeof p.category === "object"
+        ? p.category?._id === selectedCategory
+        : p.category === selectedCategory);
     return matchesSearch && matchesCat;
   });
 
@@ -97,17 +104,38 @@ export default function ProductManagerClient({
         price: product.price?.toString() || "",
         compareAtPrice: product.compareAtPrice?.toString() || "",
         featuredImage: product.featuredImage || "",
-        images: product.images ? product.images.join(", ") : "",
+        images: Array.isArray(product.images)
+          ? product.images
+          : typeof product.images === "string"
+            ? product.images
+                .split(",")
+                .map((s: string) => s.trim())
+                .filter(Boolean)
+            : [],
         sku: product.sku || "",
         stock: product.stock?.toString() || "0",
         lowStockThreshold: product.lowStockThreshold?.toString() || "5",
-        category: typeof product.category === "object" ? product.category._id : product.category || "",
-        subcategory: typeof product.subcategory === "object" ? product.subcategory._id : product.subcategory || "",
-        collectionId: typeof product.collectionId === "object" ? product.collectionId._id : product.collectionId || "",
-        brandId: typeof product.brandId === "object" ? product.brandId._id : product.brandId || "",
+        category:
+          typeof product.category === "object"
+            ? product.category._id
+            : product.category || "",
+        subcategory:
+          typeof product.subcategory === "object"
+            ? product.subcategory._id
+            : product.subcategory || "",
+        collectionId:
+          typeof product.collectionId === "object"
+            ? product.collectionId._id
+            : product.collectionId || "",
+        brandId:
+          typeof product.brandId === "object"
+            ? product.brandId._id
+            : product.brandId || "",
         tags: product.tags ? product.tags.join(", ") : "",
         sizes: product.sizes ? product.sizes.join(", ") : "",
-        colors: product.colors ? product.colors.map((c: any) => c.name || c).join(", ") : "",
+        colors: product.colors
+          ? product.colors.map((c: any) => c.name || c).join(", ")
+          : "",
         careInstructions: product.careInstructions || "",
         isFeatured: product.isFeatured || false,
         isTrending: product.isTrending || false,
@@ -129,8 +157,9 @@ export default function ProductManagerClient({
         shortDescription: "",
         price: "",
         compareAtPrice: "",
-        featuredImage: "https://images.unsplash.com/photo-1589756823695-278bc923f962?w=800",
-        images: "",
+        featuredImage:
+          "https://images.unsplash.com/photo-1589756823695-278bc923f962?w=800",
+        images: [] as string[],
         sku: `QRV-${Math.floor(1000 + Math.random() * 9000)}`,
         stock: "15",
         lowStockThreshold: "5",
@@ -177,13 +206,21 @@ export default function ProductManagerClient({
     try {
       const payload = {
         title: formData.title,
-        slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, "-"),
+        slug:
+          formData.slug || formData.title.toLowerCase().replace(/\s+/g, "-"),
         description: formData.description || "Luxury QORVAN crafted product.",
         shortDescription: formData.shortDescription,
         price: parseFloat(formData.price) || 0,
-        compareAtPrice: formData.compareAtPrice ? parseFloat(formData.compareAtPrice) : undefined,
+        compareAtPrice: formData.compareAtPrice
+          ? parseFloat(formData.compareAtPrice)
+          : undefined,
         featuredImage: formData.featuredImage,
-        images: formData.images ? formData.images.split(",").map((s) => s.trim()).filter(Boolean) : [formData.featuredImage],
+        images:
+          Array.isArray(formData.images) && formData.images.length > 0
+            ? formData.images
+            : formData.featuredImage
+              ? [formData.featuredImage]
+              : [],
         sku: formData.sku,
         stock: parseInt(formData.stock) || 0,
         lowStockThreshold: parseInt(formData.lowStockThreshold) || 5,
@@ -191,10 +228,23 @@ export default function ProductManagerClient({
         subcategory: formData.subcategory || undefined,
         collectionId: formData.collectionId || undefined,
         brandId: formData.brandId || undefined,
-        tags: formData.tags ? formData.tags.split(",").map((s) => s.trim()).filter(Boolean) : [],
-        sizes: formData.sizes ? formData.sizes.split(",").map((s) => s.trim()).filter(Boolean) : [],
+        tags: formData.tags
+          ? formData.tags
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [],
+        sizes: formData.sizes
+          ? formData.sizes
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [],
         colors: formData.colors
-          ? formData.colors.split(",").map((s) => ({ name: s.trim() })).filter((c) => c.name)
+          ? formData.colors
+              .split(",")
+              .map((s) => ({ name: s.trim() }))
+              .filter((c) => c.name)
           : [{ name: "Standard" }],
         specifications: [
           { key: "Brand", value: "QORVAN Luxury" },
@@ -209,10 +259,19 @@ export default function ProductManagerClient({
         status: formData.status,
         // SEO Payload
         seoTitle: formData.seoTitle.trim() || formData.title.trim(),
-        seoDescription: formData.seoDescription.trim() || formData.shortDescription.trim() || formData.description.slice(0, 160),
+        seoDescription:
+          formData.seoDescription.trim() ||
+          formData.shortDescription.trim() ||
+          formData.description.slice(0, 160),
         seoKeywords: formData.seoKeywords
-          ? formData.seoKeywords.split(",").map((s) => s.trim()).filter(Boolean)
-          : formData.tags.split(",").map((s) => s.trim()).filter(Boolean),
+          ? formData.seoKeywords
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : formData.tags
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean),
         canonicalUrl: formData.canonicalUrl.trim() || undefined,
       };
 
@@ -220,7 +279,9 @@ export default function ProductManagerClient({
         const res = await updateProduct(editingProduct._id, payload);
         if (res.success) {
           toast.success("Product updated successfully!");
-          setProducts((prev) => prev.map((p) => (p._id === editingProduct._id ? res.data : p)));
+          setProducts((prev) =>
+            prev.map((p) => (p._id === editingProduct._id ? res.data : p)),
+          );
           setIsModalOpen(false);
         } else {
           toast.error(res.error || "Failed to update product");
@@ -267,7 +328,8 @@ export default function ProductManagerClient({
             Product Catalog & Inventory
           </h1>
           <p className="text-xs text-gray-500 mt-1">
-            Manage luxury fashion catalog, pricing, variants, stock, and SEO search optimization.
+            Manage luxury fashion catalog, pricing, variants, stock, and SEO
+            search optimization.
           </p>
         </div>
         <button
@@ -341,21 +403,30 @@ export default function ProductManagerClient({
                           className="w-10 h-10 rounded-lg object-cover border border-gray-200 shrink-0"
                         />
                         <div>
-                          <div className="font-bold text-gray-900 line-clamp-1">{p.title}</div>
+                          <div className="font-bold text-gray-900 line-clamp-1">
+                            {p.title}
+                          </div>
                           <div className="text-[10px] text-gray-400 font-mono">
-                            {typeof p.category === "object" ? p.category?.name : "Category"}
+                            {typeof p.category === "object"
+                              ? p.category?.name
+                              : "Category"}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3 px-4 font-mono font-bold text-gray-700">{p.sku}</td>
-                    <td className="py-3 px-4 font-bold text-gray-900">৳{p.price?.toLocaleString()}</td>
+                    <td className="py-3 px-4 font-mono font-bold text-gray-700">
+                      {p.sku}
+                    </td>
+                    <td className="py-3 px-4 font-bold text-gray-900">
+                      ৳{p.price?.toLocaleString()}
+                    </td>
                     <td className="py-3 px-4">
                       <span
-                        className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${p.stock <= (p.lowStockThreshold || 5)
+                        className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          p.stock <= (p.lowStockThreshold || 5)
                             ? "bg-rose-100 text-rose-800 border border-rose-200"
                             : "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                          }`}
+                        }`}
                       >
                         {p.stock} in stock
                       </span>
@@ -416,9 +487,14 @@ export default function ProductManagerClient({
             <div className="px-6 py-4 border-b flex items-center justify-between bg-gray-50">
               <div>
                 <h2 className="text-lg font-bold text-gray-900">
-                  {editingProduct ? `Edit Product: ${editingProduct.title}` : "Create New QORVAN Product"}
+                  {editingProduct
+                    ? `Edit Product: ${editingProduct.title}`
+                    : "Create New QORVAN Product"}
                 </h2>
-                <p className="text-xs text-gray-500">Configure catalog properties, inventory stock, and SEO search tags.</p>
+                <p className="text-xs text-gray-500">
+                  Configure catalog properties, inventory stock, and SEO search
+                  tags.
+                </p>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -433,32 +509,39 @@ export default function ProductManagerClient({
               <button
                 type="button"
                 onClick={() => setModalTab("general")}
-                className={`py-3 text-xs font-bold border-b-2 transition flex items-center gap-2 ${modalTab === "general"
+                className={`py-3 text-xs font-bold border-b-2 transition flex items-center gap-2 ${
+                  modalTab === "general"
                     ? "border-black text-black"
                     : "border-transparent text-gray-500 hover:text-gray-900"
-                  }`}
+                }`}
               >
                 <Package className="w-4 h-4" /> Product Details & Pricing
               </button>
               <button
                 type="button"
                 onClick={() => setModalTab("seo")}
-                className={`py-3 text-xs font-bold border-b-2 transition flex items-center gap-2 ${modalTab === "seo"
+                className={`py-3 text-xs font-bold border-b-2 transition flex items-center gap-2 ${
+                  modalTab === "seo"
                     ? "border-black text-black"
                     : "border-transparent text-gray-500 hover:text-gray-900"
-                  }`}
+                }`}
               >
                 <Globe className="w-4 h-4" /> Search Engine Optimization (SEO)
               </button>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
+            <form
+              onSubmit={handleSubmit}
+              className="flex-1 overflow-y-auto p-6 space-y-4"
+            >
               {modalTab === "general" ? (
                 <div className="space-y-4 text-xs">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="font-bold text-gray-700 mb-1 block">Title *</label>
+                      <label className="font-bold text-gray-700 mb-1 block">
+                        Title *
+                      </label>
                       <input
                         type="text"
                         required
@@ -469,12 +552,16 @@ export default function ProductManagerClient({
                       />
                     </div>
                     <div>
-                      <label className="font-bold text-gray-700 mb-1 block">SKU *</label>
+                      <label className="font-bold text-gray-700 mb-1 block">
+                        SKU *
+                      </label>
                       <input
                         type="text"
                         required
                         value={formData.sku}
-                        onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, sku: e.target.value })
+                        }
                         className="w-full p-2.5 border rounded-lg font-mono"
                       />
                     </div>
@@ -482,33 +569,48 @@ export default function ProductManagerClient({
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="font-bold text-gray-700 mb-1 block">Price (BDT ৳) *</label>
+                      <label className="font-bold text-gray-700 mb-1 block">
+                        Price (BDT ৳) *
+                      </label>
                       <input
                         type="number"
                         required
                         value={formData.price}
-                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, price: e.target.value })
+                        }
                         placeholder="3500"
                         className="w-full p-2.5 border rounded-lg"
                       />
                     </div>
                     <div>
-                      <label className="font-bold text-gray-700 mb-1 block">Compare At Price</label>
+                      <label className="font-bold text-gray-700 mb-1 block">
+                        Compare At Price
+                      </label>
                       <input
                         type="number"
                         value={formData.compareAtPrice}
-                        onChange={(e) => setFormData({ ...formData, compareAtPrice: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            compareAtPrice: e.target.value,
+                          })
+                        }
                         placeholder="4500"
                         className="w-full p-2.5 border rounded-lg"
                       />
                     </div>
                     <div>
-                      <label className="font-bold text-gray-700 mb-1 block">Initial Stock *</label>
+                      <label className="font-bold text-gray-700 mb-1 block">
+                        Initial Stock *
+                      </label>
                       <input
                         type="number"
                         required
                         value={formData.stock}
-                        onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, stock: e.target.value })
+                        }
                         className="w-full p-2.5 border rounded-lg"
                       />
                     </div>
@@ -516,11 +618,15 @@ export default function ProductManagerClient({
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                      <label className="font-bold text-gray-700 mb-1 block">Category *</label>
+                      <label className="font-bold text-gray-700 mb-1 block">
+                        Category *
+                      </label>
                       <select
                         required
                         value={formData.category}
-                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, category: e.target.value })
+                        }
                         className="w-full p-2.5 border rounded-lg bg-white"
                       >
                         <option value="">Select Category</option>
@@ -532,10 +638,17 @@ export default function ProductManagerClient({
                       </select>
                     </div>
                     <div>
-                      <label className="font-bold text-gray-700 mb-1 block">Collection</label>
+                      <label className="font-bold text-gray-700 mb-1 block">
+                        Collection
+                      </label>
                       <select
                         value={formData.collectionId}
-                        onChange={(e) => setFormData({ ...formData, collectionId: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            collectionId: e.target.value,
+                          })
+                        }
                         className="w-full p-2.5 border rounded-lg bg-white"
                       >
                         <option value="">Select Collection</option>
@@ -547,10 +660,14 @@ export default function ProductManagerClient({
                       </select>
                     </div>
                     <div>
-                      <label className="font-bold text-gray-700 mb-1 block">Brand</label>
+                      <label className="font-bold text-gray-700 mb-1 block">
+                        Brand
+                      </label>
                       <select
                         value={formData.brandId}
-                        onChange={(e) => setFormData({ ...formData, brandId: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, brandId: e.target.value })
+                        }
                         className="w-full p-2.5 border rounded-lg bg-white"
                       >
                         <option value="">Select Brand</option>
@@ -567,40 +684,52 @@ export default function ProductManagerClient({
                     label="Featured Main Image"
                     required
                     value={formData.featuredImage}
-                    onChange={(url) => setFormData({ ...formData, featuredImage: url })}
+                    onChange={(url) =>
+                      setFormData({ ...formData, featuredImage: url })
+                    }
                     placeholder="https://... or upload from library"
+                  />
+
+                  <MultiImageUploader
+                    label="Gallery Images"
+                    value={formData.images}
+                    onChange={(urls) =>
+                      setFormData({ ...formData, images: urls })
+                    }
+                    maxImages={15}
                   />
 
                   <div>
                     <label className="font-bold text-gray-700 mb-1 block">
-                      Gallery Images (comma separated URLs)
+                      Short Description
                     </label>
                     <input
                       type="text"
-                      value={formData.images}
-                      onChange={(e) => setFormData({ ...formData, images: e.target.value })}
-                      placeholder="https://..., https://..."
-                      className="w-full p-2.5 border rounded-lg"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="font-bold text-gray-700 mb-1 block">Short Description</label>
-                    <input
-                      type="text"
                       value={formData.shortDescription}
-                      onChange={(e) => setFormData({ ...formData, shortDescription: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          shortDescription: e.target.value,
+                        })
+                      }
                       placeholder="Brief 1-sentence product highlight..."
                       className="w-full p-2.5 border rounded-lg"
                     />
                   </div>
 
                   <div>
-                    <label className="font-bold text-gray-700 mb-1 block">Full Description</label>
+                    <label className="font-bold text-gray-700 mb-1 block">
+                      Full Description
+                    </label>
                     <textarea
                       rows={4}
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       placeholder="Crafted with pure Italian silk..."
                       className="w-full p-2.5 border rounded-lg"
                     />
@@ -608,21 +737,29 @@ export default function ProductManagerClient({
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="font-bold text-gray-700 mb-1 block">Sizes (comma separated)</label>
+                      <label className="font-bold text-gray-700 mb-1 block">
+                        Sizes (comma separated)
+                      </label>
                       <input
                         type="text"
                         value={formData.sizes}
-                        onChange={(e) => setFormData({ ...formData, sizes: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, sizes: e.target.value })
+                        }
                         placeholder="S, M, L, XL"
                         className="w-full p-2.5 border rounded-lg"
                       />
                     </div>
                     <div>
-                      <label className="font-bold text-gray-700 mb-1 block">Colors (comma separated)</label>
+                      <label className="font-bold text-gray-700 mb-1 block">
+                        Colors (comma separated)
+                      </label>
                       <input
                         type="text"
                         value={formData.colors}
-                        onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, colors: e.target.value })
+                        }
                         placeholder="Black, Gold, Navy"
                         className="w-full p-2.5 border rounded-lg"
                       />
@@ -634,7 +771,12 @@ export default function ProductManagerClient({
                       <input
                         type="checkbox"
                         checked={formData.isFeatured}
-                        onChange={(e) => setFormData({ ...formData, isFeatured: e.target.checked })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            isFeatured: e.target.checked,
+                          })
+                        }
                         className="rounded text-black focus:ring-black"
                       />
                       <span>Featured Product</span>
@@ -643,7 +785,12 @@ export default function ProductManagerClient({
                       <input
                         type="checkbox"
                         checked={formData.isTrending}
-                        onChange={(e) => setFormData({ ...formData, isTrending: e.target.checked })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            isTrending: e.target.checked,
+                          })
+                        }
                         className="rounded text-black focus:ring-black"
                       />
                       <span>Trending</span>
@@ -652,7 +799,12 @@ export default function ProductManagerClient({
                       <input
                         type="checkbox"
                         checked={formData.isNewArrival}
-                        onChange={(e) => setFormData({ ...formData, isNewArrival: e.target.checked })}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            isNewArrival: e.target.checked,
+                          })
+                        }
                         className="rounded text-black focus:ring-black"
                       />
                       <span>New Arrival</span>
@@ -666,17 +818,24 @@ export default function ProductManagerClient({
                   <div className="bg-gray-50 border border-gray-200 p-4 rounded-xl space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-black" /> Google Search Preview
+                        <Sparkles className="w-3.5 h-3.5 text-black" /> Google
+                        Search Preview
                       </span>
-                      <span className="text-[10px] text-gray-400">Live Mockup</span>
+                      <span className="text-[10px] text-gray-400">
+                        Live Mockup
+                      </span>
                     </div>
                     <div className="bg-white border rounded-lg p-3.5 shadow-xs space-y-1 font-sans">
                       <div className="text-[11px] text-gray-600 truncate flex items-center gap-1">
                         <span className="text-gray-400">qorvan.com</span>
-                        <span>› product › {formData.slug || "product-slug"}</span>
+                        <span>
+                          › product › {formData.slug || "product-slug"}
+                        </span>
                       </div>
                       <div className="text-base text-blue-800 font-medium hover:underline cursor-pointer truncate">
-                        {formData.seoTitle || formData.title || "Product SEO Title | QORVAN"}
+                        {formData.seoTitle ||
+                          formData.title ||
+                          "Product SEO Title | QORVAN"}
                       </div>
                       <div className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
                         {formData.seoDescription ||
@@ -689,10 +848,15 @@ export default function ProductManagerClient({
 
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="font-bold text-gray-700 block">Product SEO Title</label>
+                      <label className="font-bold text-gray-700 block">
+                        Product SEO Title
+                      </label>
                       <span
-                        className={`text-[10px] font-mono ${formData.seoTitle.length > 60 ? "text-amber-600" : "text-gray-400"
-                          }`}
+                        className={`text-[10px] font-mono ${
+                          formData.seoTitle.length > 60
+                            ? "text-amber-600"
+                            : "text-gray-400"
+                        }`}
                       >
                         {formData.seoTitle.length} / 60 chars
                       </span>
@@ -700,7 +864,9 @@ export default function ProductManagerClient({
                     <input
                       type="text"
                       value={formData.seoTitle}
-                      onChange={(e) => setFormData({ ...formData, seoTitle: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, seoTitle: e.target.value })
+                      }
                       placeholder="Leave blank to use Product Title"
                       className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black"
                     />
@@ -708,10 +874,15 @@ export default function ProductManagerClient({
 
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="font-bold text-gray-700 block">Product SEO Meta Description</label>
+                      <label className="font-bold text-gray-700 block">
+                        Product SEO Meta Description
+                      </label>
                       <span
-                        className={`text-[10px] font-mono ${formData.seoDescription.length > 160 ? "text-amber-600" : "text-gray-400"
-                          }`}
+                        className={`text-[10px] font-mono ${
+                          formData.seoDescription.length > 160
+                            ? "text-amber-600"
+                            : "text-gray-400"
+                        }`}
                       >
                         {formData.seoDescription.length} / 160 chars
                       </span>
@@ -719,7 +890,12 @@ export default function ProductManagerClient({
                     <textarea
                       rows={3}
                       value={formData.seoDescription}
-                      onChange={(e) => setFormData({ ...formData, seoDescription: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          seoDescription: e.target.value,
+                        })
+                      }
                       placeholder="Summarize product features and benefits in 150-160 characters for search engine result pages..."
                       className="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black"
                     />
@@ -732,18 +908,30 @@ export default function ProductManagerClient({
                     <input
                       type="text"
                       value={formData.seoKeywords}
-                      onChange={(e) => setFormData({ ...formData, seoKeywords: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          seoKeywords: e.target.value,
+                        })
+                      }
                       placeholder="silk tie, luxury menswear, bespoke suit accessories"
                       className="w-full p-2.5 border border-gray-300 rounded-lg"
                     />
                   </div>
 
                   <div>
-                    <label className="font-bold text-gray-700 block mb-1">Canonical URL (optional)</label>
+                    <label className="font-bold text-gray-700 block mb-1">
+                      Canonical URL (optional)
+                    </label>
                     <input
                       type="text"
                       value={formData.canonicalUrl}
-                      onChange={(e) => setFormData({ ...formData, canonicalUrl: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          canonicalUrl: e.target.value,
+                        })
+                      }
                       placeholder="https://qorvan.com/product/original-product-link"
                       className="w-full p-2.5 border border-gray-300 rounded-lg font-mono text-xs"
                     />
@@ -765,7 +953,11 @@ export default function ProductManagerClient({
                   disabled={loading}
                   className="px-5 py-2.5 bg-black text-white rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-gray-800 transition shadow-sm disabled:opacity-50"
                 >
-                  {loading ? "Saving..." : editingProduct ? "Update Product & SEO" : "Create Product"}
+                  {loading
+                    ? "Saving..."
+                    : editingProduct
+                      ? "Update Product & SEO"
+                      : "Create Product"}
                 </button>
               </div>
             </form>
