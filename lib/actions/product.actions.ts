@@ -34,9 +34,9 @@ export async function getProducts(params?: {
 
     const filter: any = {};
 
-    if (params?.status) {
+    if (params?.status && params.status !== "all") {
       filter.status = params.status;
-    } else {
+    } else if (!params?.status || params.status === undefined) {
       filter.status = "active";
     }
 
@@ -197,11 +197,20 @@ export async function createProduct(params: any) {
 
     const newProduct = await Product.create(normalizedParams);
 
+    const populatedProduct = await Product.findById(newProduct._id)
+      .populate("category", "name slug")
+      .populate("collectionId", "name slug")
+      .populate("brandId", "name slug")
+      .lean();
+
     revalidatePath("/shop");
     revalidatePath("/dashboard/products");
     revalidatePath("/dashboard/inventory");
 
-    return { success: true, data: JSON.parse(JSON.stringify(newProduct)) };
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(populatedProduct)),
+    };
   } catch (error: any) {
     return {
       success: false,
@@ -241,12 +250,21 @@ export async function updateProduct(id: string, params: any) {
 
     if (!updatedProduct) return { success: false, error: "Product not found" };
 
+    const populatedUpdated = await Product.findById(updatedProduct._id)
+      .populate("category", "name slug")
+      .populate("collectionId", "name slug")
+      .populate("brandId", "name slug")
+      .lean();
+
     revalidatePath("/shop");
     revalidatePath(`/product/${updatedProduct.slug}`);
     revalidatePath("/dashboard/products");
     revalidatePath("/dashboard/inventory");
 
-    return { success: true, data: JSON.parse(JSON.stringify(updatedProduct)) };
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(populatedUpdated)),
+    };
   } catch (error: any) {
     return {
       success: false,

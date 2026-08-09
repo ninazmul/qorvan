@@ -42,6 +42,7 @@ export default function ProductManagerClient({
   const [products, setProducts] = useState(initialProducts);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -89,7 +90,9 @@ export default function ProductManagerClient({
       (typeof p.category === "object"
         ? p.category?._id === selectedCategory
         : p.category === selectedCategory);
-    return matchesSearch && matchesCat;
+    const matchesStatus =
+      selectedStatus === "all" || p.status === selectedStatus;
+    return matchesSearch && matchesCat && matchesStatus;
   });
 
   const openCreateOrEditModal = (product?: any) => {
@@ -352,7 +355,7 @@ export default function ProductManagerClient({
             className="w-full pl-9 pr-4 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:border-black bg-white"
           />
         </div>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -364,6 +367,16 @@ export default function ProductManagerClient({
                 {c.name}
               </option>
             ))}
+          </select>
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="px-3 py-2 text-xs border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-black"
+          >
+            <option value="all">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Archived</option>
           </select>
           <span className="text-xs font-bold text-gray-500 shrink-0">
             Total: {filteredProducts.length} items
@@ -381,6 +394,7 @@ export default function ProductManagerClient({
                 <th className="py-3.5 px-4">SKU</th>
                 <th className="py-3.5 px-4">Price</th>
                 <th className="py-3.5 px-4">Stock</th>
+                <th className="py-3.5 px-4">Status</th>
                 <th className="py-3.5 px-4">Badges</th>
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
@@ -388,91 +402,110 @@ export default function ProductManagerClient({
             <tbody className="divide-y divide-gray-100">
               {filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-10 text-center text-gray-500">
+                  <td colSpan={7} className="py-10 text-center text-gray-500">
                     No products match your criteria.
                   </td>
                 </tr>
               ) : (
-                filteredProducts.map((p) => (
-                  <tr key={p._id} className="hover:bg-gray-50/80 transition">
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={p.featuredImage}
-                          alt={p.title}
-                          className="w-10 h-10 rounded-lg object-cover border border-gray-200 shrink-0"
-                        />
-                        <div>
-                          <div className="font-bold text-gray-900 line-clamp-1">
-                            {p.title}
-                          </div>
-                          <div className="text-[10px] text-gray-400 font-mono">
-                            {typeof p.category === "object"
-                              ? p.category?.name
-                              : "Category"}
+                filteredProducts.map((p) => {
+                  const statusColors: Record<string, string> = {
+                    active:
+                      "bg-emerald-100 text-emerald-800 border border-emerald-200",
+                    draft:
+                      "bg-amber-100 text-amber-800 border border-amber-200",
+                    archived:
+                      "bg-gray-200 text-gray-700 border border-gray-300",
+                  };
+                  const statusColor =
+                    statusColors[p.status] || statusColors.draft;
+                  return (
+                    <tr key={p._id} className="hover:bg-gray-50/80 transition">
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={p.featuredImage}
+                            alt={p.title}
+                            className="w-10 h-10 rounded-lg object-cover border border-gray-200 shrink-0"
+                          />
+                          <div>
+                            <div className="font-bold text-gray-900 line-clamp-1">
+                              {p.title}
+                            </div>
+                            <div className="text-[10px] text-gray-400 font-mono">
+                              {typeof p.category === "object"
+                                ? p.category?.name
+                                : "Category"}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 font-mono font-bold text-gray-700">
-                      {p.sku}
-                    </td>
-                    <td className="py-3 px-4 font-bold text-gray-900">
-                      ৳{p.price?.toLocaleString()}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          p.stock <= (p.lowStockThreshold || 5)
-                            ? "bg-rose-100 text-rose-800 border border-rose-200"
-                            : "bg-emerald-100 text-emerald-800 border border-emerald-200"
-                        }`}
-                      >
-                        {p.stock} in stock
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      <div className="flex flex-wrap gap-1">
-                        {p.isFeatured && (
-                          <span className="bg-gray-100 text-gray-800 text-[9px] px-1.5 py-0.5 rounded font-bold border border-gray-200">
-                            Featured
-                          </span>
-                        )}
-                        {p.isTrending && (
-                          <span className="bg-gray-100 text-gray-800 text-[9px] px-1.5 py-0.5 rounded font-bold border border-gray-200">
-                            Trending
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link
-                          href={`/product/${p.slug}`}
-                          target="_blank"
-                          className="p-1.5 rounded-lg text-gray-500 hover:text-black hover:bg-gray-100 transition"
-                          title="View on Storefront"
+                      </td>
+                      <td className="py-3 px-4 font-mono font-bold text-gray-700">
+                        {p.sku}
+                      </td>
+                      <td className="py-3 px-4 font-bold text-gray-900">
+                        ৳{Number(p.price || 0).toLocaleString()}
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            p.stock <= (p.lowStockThreshold || 5)
+                              ? "bg-rose-100 text-rose-800 border border-rose-200"
+                              : "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                          }`}
                         >
-                          <Globe className="w-4 h-4" />
-                        </Link>
-                        <button
-                          onClick={() => openCreateOrEditModal(p)}
-                          className="p-1.5 rounded-lg text-gray-700 hover:text-black hover:bg-gray-100 transition"
-                          title="Edit Product & SEO"
+                          {p.stock} in stock
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusColor}`}
                         >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(p._id)}
-                          className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition"
-                          title="Delete Product"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          {p.status || "draft"}
+                        </span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex flex-wrap gap-1">
+                          {p.isFeatured && (
+                            <span className="bg-gray-100 text-gray-800 text-[9px] px-1.5 py-0.5 rounded font-bold border border-gray-200">
+                              Featured
+                            </span>
+                          )}
+                          {p.isTrending && (
+                            <span className="bg-gray-100 text-gray-800 text-[9px] px-1.5 py-0.5 rounded font-bold border border-gray-200">
+                              Trending
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/product/${p.slug}`}
+                            target="_blank"
+                            className="p-1.5 rounded-lg text-gray-500 hover:text-black hover:bg-gray-100 transition"
+                            title="View on Storefront"
+                          >
+                            <Globe className="w-4 h-4" />
+                          </Link>
+                          <button
+                            onClick={() => openCreateOrEditModal(p)}
+                            className="p-1.5 rounded-lg text-gray-700 hover:text-black hover:bg-gray-100 transition"
+                            title="Edit Product & SEO"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(p._id)}
+                            className="p-1.5 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition"
+                            title="Delete Product"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
