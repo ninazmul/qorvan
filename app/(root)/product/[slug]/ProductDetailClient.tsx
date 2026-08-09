@@ -172,11 +172,10 @@ export default function ProductDetailClient({
                     setActiveImage(img);
                   }}
                   onDoubleClick={() => openZoom(img)}
-                  className={`group/thumb relative w-20 h-20 rounded-xl overflow-hidden border-2 transition shrink-0 ${
-                    activeImage === img
+                  className={`group/thumb relative w-20 h-20 rounded-xl overflow-hidden border-2 transition shrink-0 ${activeImage === img
                       ? "border-amber-800 shadow"
                       : "border-gray-200 opacity-70 hover:opacity-100"
-                  }`}
+                    }`}
                 >
                   <img
                     src={img}
@@ -256,11 +255,10 @@ export default function ProductDetailClient({
                   <button
                     key={s}
                     onClick={() => setSelectedSize(s)}
-                    className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${
-                      selectedSize === s
+                    className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${selectedSize === s
                         ? "bg-black text-amber-300 border-amber-950"
                         : "bg-white text-gray-700 border-gray-200 hover:border-amber-800"
-                    }`}
+                      }`}
                   >
                     {s}
                   </button>
@@ -282,11 +280,10 @@ export default function ProductDetailClient({
                     <button
                       key={colorName}
                       onClick={() => setSelectedColor(colorName)}
-                      className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${
-                        selectedColor === colorName
+                      className={`px-4 py-2 text-xs font-bold rounded-lg border transition ${selectedColor === colorName
                           ? "bg-black text-amber-300 border-amber-950"
                           : "bg-white text-gray-700 border-gray-200 hover:border-amber-800"
-                      }`}
+                        }`}
                     >
                       {colorName}
                     </button>
@@ -321,7 +318,7 @@ export default function ProductDetailClient({
                 onClick={handleAddToCart}
                 className="flex-1 py-3.5 bg-black hover:bg-black text-amber-300 font-bold text-xs uppercase tracking-widest rounded-xl transition flex items-center justify-center gap-2 shadow-lg"
               >
-                <ShoppingBag className="w-4 h-4" /> Add to Shopping Bag
+                <ShoppingBag className="w-4 h-4" /> Add to Cart
               </button>
 
               <button
@@ -333,11 +330,10 @@ export default function ProductDetailClient({
                       : "Saved to Wishlist",
                   );
                 }}
-                className={`p-3.5 rounded-xl border transition ${
-                  isWishlisted(product._id)
+                className={`p-3.5 rounded-xl border transition ${isWishlisted(product._id)
                     ? "bg-black text-white border-amber-800"
                     : "bg-white border-gray-300 text-gray-700"
-                }`}
+                  }`}
               >
                 <Heart className="w-5 h-5 fill-current" />
               </button>
@@ -347,7 +343,7 @@ export default function ProductDetailClient({
               onClick={handleBuyNow}
               className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-bold text-xs uppercase tracking-widest rounded-xl transition shadow-md"
             >
-              Instant Buy Now (Cash on Delivery)
+              Buy Now (Cash on Delivery)
             </button>
           </div>
 
@@ -539,11 +535,10 @@ export default function ProductDetailClient({
                       key={idx}
                       onClick={() => setZoomIndex(idx)}
                       aria-label={`View image ${idx + 1}`}
-                      className={`w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-lg overflow-hidden border-2 transition ${
-                        idx === zoomIndex
+                      className={`w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-lg overflow-hidden border-2 transition ${idx === zoomIndex
                           ? "border-amber-400 scale-105"
                           : "border-white/20 opacity-60 hover:opacity-100"
-                      }`}
+                        }`}
                     >
                       <img
                         src={img}
