@@ -181,7 +181,6 @@ Populate `.env.local` with your operational API keys and credentials (see [Envir
 | `CONTACT_RECEIVER`                  | Email address receiving contact form submissions                |
 | `EMAIL_USER` / `EMAIL_PASS`         | SMTP email server credentials for outbound messaging            |
 | `SMTP_HOST` / `SMTP_PORT`           | Outbound mail server configuration (`smtp.gmail.com`, `465`)    |
-| `MAINTENANCE_MODE`                  | Boolean flag (`true`/`false`) to activate maintenance mode page |
 
 ---
 
