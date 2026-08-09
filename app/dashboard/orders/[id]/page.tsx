@@ -1,4 +1,4 @@
-import { requireDashboardAccess } from "@/lib/auth/rbac";
+import { requireDashboardAccess, getCurrentDashboardAccess } from "@/lib/auth/rbac";
 import { getOrderById } from "@/lib/actions/order.actions";
 import Link from "next/link";
 import DashboardOrderDetailClient from "./DashboardOrderDetailClient";
@@ -11,6 +11,7 @@ export default async function OrderDetailPage({
   params: Promise<{ id: string }>;
 }) {
   await requireDashboardAccess("/");
+  const access = await getCurrentDashboardAccess();
   const { id } = await params;
   const res = await getOrderById(id);
 
@@ -29,5 +30,10 @@ export default async function OrderDetailPage({
     );
   }
 
-  return <DashboardOrderDetailClient initialOrder={res.data} />;
+  return (
+    <DashboardOrderDetailClient
+      initialOrder={res.data}
+      isSuperAdmin={access?.isSuperAdmin || false}
+    />
+  );
 }

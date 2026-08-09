@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Printer,
@@ -12,30 +13,43 @@ import {
   Mail,
   MapPin,
   Ticket,
-  FileText,
+  Trash2,
+  AlertTriangle,
+  Send,
 } from "lucide-react";
-import { updateOrderStatus } from "@/lib/actions/order.actions";
+import { updateOrderStatus, deleteOrder } from "@/lib/actions/order.actions";
 import { toast } from "react-hot-toast";
 
 export default function DashboardOrderDetailClient({
   initialOrder,
+  isSuperAdmin = false,
 }: {
   initialOrder: any;
+  isSuperAdmin?: boolean;
 }) {
+  const router = useRouter();
   const [order, setOrder] = useState(initialOrder);
+  const [selectedStatus, setSelectedStatus] = useState(initialOrder.orderStatus || "pending");
+  const [statusNote, setStatusNote] = useState("");
   const [updating, setUpdating] = useState(false);
 
-  const handleStatusChange = async (newStatus: any) => {
+  // Delete Modal
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleStatusChange = async (e: React.FormEvent) => {
+    e.preventDefault();
     setUpdating(true);
+
     try {
-      const res = await updateOrderStatus(
-        order._id,
-        newStatus,
-        `Status updated to ${newStatus} by Admin`
-      );
+      const defaultNote =
+        statusNote.trim() || `Order status updated to ${selectedStatus}`;
+      const res = await updateOrderStatus(order._id, selectedStatus, defaultNote);
+
       if (res.success && res.data) {
         setOrder(res.data);
-        toast.success(`Order status updated to ${newStatus}`);
+        setStatusNote("");
+        toast.success(`Order status updated to ${selectedStatus} & customer notified!`);
       } else {
         toast.error(res.error || "Failed to update order status");
       }
@@ -43,6 +57,23 @@ export default function DashboardOrderDetailClient({
       toast.error(err.message || "Failed to update status");
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const handleDeleteOrder = async () => {
+    setDeleting(true);
+    try {
+      const res = await deleteOrder(order._id);
+      if (res.success) {
+        toast.success(`Order #${order.orderNumber} deleted permanently`);
+        router.push("/dashboard/orders");
+      } else {
+        toast.error(res.error || "Failed to delete order");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Error deleting order");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -76,15 +107,39 @@ export default function DashboardOrderDetailClient({
           </div>
         </div>
 
-        <div className="flex items-center gap-3 print:hidden">
-          {/* Status Select */}
-          <div className="flex items-center gap-2 text-xs">
-            <span className="font-bold text-zinc-500">Status:</span>
+        <div className="flex items-center gap-2 print:hidden">
+          <button
+            onClick={handlePrintInvoice}
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl border border-zinc-300 bg-white text-gray-800 hover:bg-zinc-100 shadow-sm"
+          >
+            <Printer className="w-4 h-4" /> Print Invoice
+          </button>
+
+          {isSuperAdmin && (
+            <button
+              onClick={() => setDeleteModal(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-xl border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 transition"
+              title="Delete Order (Super Admin Only)"
+            >
+              <Trash2 className="w-4 h-4" /> Delete Order
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Admin Quick Action Panel: Status Update with Note */}
+      <div className="bg-white p-6 rounded-3xl border border-zinc-200 shadow-sm space-y-4 print:hidden">
+        <h2 className="text-xs font-extrabold uppercase tracking-wider text-gray-900 flex items-center gap-2 border-b border-zinc-100 pb-2">
+          <Send className="w-4 h-4 text-zinc-500" /> Update Order Status &amp; Notify Customer
+        </h2>
+
+        <form onSubmit={handleStatusChange} className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div>
+            <label className="font-bold text-gray-700 block mb-1">Select New Status</label>
             <select
-              value={order.orderStatus}
-              disabled={updating}
-              onChange={(e) => handleStatusChange(e.target.value)}
-              className="px-3 py-1.5 text-xs font-bold border border-zinc-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-black transition"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="w-full p-3 font-bold border border-zinc-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:border-black"
             >
               <option value="pending">Pending</option>
               <option value="confirmed">Confirmed</option>
@@ -96,13 +151,32 @@ export default function DashboardOrderDetailClient({
             </select>
           </div>
 
-          <button
-            onClick={handlePrintInvoice}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl border border-zinc-300 bg-white text-gray-800 hover:bg-zinc-100 shadow-sm"
-          >
-            <Printer className="w-4 h-4" /> Print Invoice
-          </button>
-        </div>
+          <div className="md:col-span-2 space-y-2">
+            <label className="font-bold text-gray-700 block mb-1">
+              Custom Note / Reason (included in customer notification email)
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={statusNote}
+                onChange={(e) => setStatusNote(e.target.value)}
+                placeholder={
+                  selectedStatus === "cancelled"
+                    ? "e.g. Order cancelled due to stock unavailability or customer request"
+                    : "e.g. Parcel handed over to courier. Tracking code: #12345"
+                }
+                className="flex-1 p-3 border border-zinc-300 rounded-xl bg-zinc-50 text-gray-900 focus:outline-none focus:border-black"
+              />
+              <button
+                type="submit"
+                disabled={updating}
+                className="px-6 py-3 bg-black hover:bg-zinc-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition shadow flex-shrink-0 disabled:opacity-50"
+              >
+                {updating ? "Saving..." : "Update Status"}
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -265,6 +339,40 @@ export default function DashboardOrderDetailClient({
           </tbody>
         </table>
       </div>
+
+      {/* Super Admin Delete Order Confirmation Modal */}
+      {deleteModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl border border-zinc-200 text-center">
+            <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-extrabold text-base text-gray-900">
+                Delete Order #{order.orderNumber}?
+              </h3>
+              <p className="text-xs text-zinc-500">
+                This action is restricted to Super Admins and cannot be undone. Are you sure you want to permanently delete this order record?
+              </p>
+            </div>
+            <div className="flex justify-center gap-3 pt-2">
+              <button
+                onClick={() => setDeleteModal(false)}
+                className="px-4 py-2 text-xs font-bold border border-zinc-300 rounded-xl text-gray-700 hover:bg-zinc-100 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteOrder}
+                disabled={deleting}
+                className="px-5 py-2 text-xs font-bold bg-rose-600 text-white rounded-xl hover:bg-rose-700 transition shadow disabled:opacity-50"
+              >
+                {deleting ? "Deleting..." : "Permanently Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

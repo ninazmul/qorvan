@@ -6,7 +6,7 @@ import Order from "@/lib/database/models/order.model";
 import Product from "@/lib/database/models/product.model";
 import Coupon from "@/lib/database/models/coupon.model";
 import User from "@/lib/database/models/user.model";
-import { requirePermission } from "@/lib/auth/rbac";
+import { requirePermission, getCurrentDashboardAccess } from "@/lib/auth/rbac";
 import { sendSystemNotificationEmail } from "@/lib/mailer/sendSystemNotificationEmail";
 import { sendCustomerOrderStatusEmail } from "@/lib/mailer/sendCustomerOrderStatusEmail";
 
@@ -53,7 +53,7 @@ export async function createOrder(params: {
     );
 
     const discountAmount = params.discountAmount || 0;
-    const totalAmount = subtotal + params.deliveryCharge - discountAmount;
+    const totalAmount = Math.max(0, subtotal + params.deliveryCharge - discountAmount);
 
     // Generate Unique Luxury Order Number: e.g. QRV-948271
     const randomDigits = Math.floor(100000 + Math.random() * 900000);
@@ -104,7 +104,7 @@ export async function createOrder(params: {
     revalidatePath("/account");
     await sendSystemNotificationEmail({
       subject: "🛒 New Order Placed",
-      message: `Order #${orderNumber} placed. Total: ${totalAmount}.`,
+      message: `Order #${orderNumber} placed. Total: ৳${totalAmount.toLocaleString()}.`,
     });
 
     // Send order confirmation email to customer
@@ -256,10 +256,12 @@ export async function updateOrderStatus(
       order.paymentStatus = "paid";
     }
 
+    const formattedNote = note?.trim() || `Order status updated to ${newStatus}`;
+
     order.trackingHistory.push({
       status: newStatus,
       timestamp: new Date(),
-      note: note || `Order status updated to ${newStatus}`,
+      note: formattedNote,
       updatedBy: access.name || "Admin",
     });
 
@@ -268,11 +270,11 @@ export async function updateOrderStatus(
     if (["shipped", "delivered", "cancelled", "returned", "confirmed", "processing"].includes(newStatus)) {
       await sendSystemNotificationEmail({
         subject: `Order ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}`,
-        message: `Order #${order.orderNumber} status changed to ${newStatus}.`,
+        message: `Order #${order.orderNumber} status changed to ${newStatus}. Note: ${formattedNote}`,
       });
     }
 
-    // Send status update email directly to customer
+    // Send status update email directly to customer with the custom note
     const customerEmail = order.shippingAddress?.email || order.guestInfo?.email;
     const customerName = order.shippingAddress?.fullName || order.guestInfo?.name || "Customer";
     if (customerEmail) {
@@ -288,7 +290,7 @@ export async function updateOrderStatus(
         totalAmount: order.totalAmount || 0,
         paymentMethod: order.paymentMethod || "COD",
         shippingAddress: order.shippingAddress,
-        note,
+        note: formattedNote,
       });
     }
 
@@ -299,5 +301,32 @@ export async function updateOrderStatus(
     return { success: true, data: JSON.parse(JSON.stringify(order)) };
   } catch (error: any) {
     return { success: false, error: error.message || "Failed to update order status" };
+  }
+}
+
+export async function deleteOrder(orderId: string) {
+  try {
+    const access = await getCurrentDashboardAccess();
+    if (!access) {
+      return { success: false, error: "Unauthorized access" };
+    }
+
+    if (!access.isSuperAdmin) {
+      return { success: false, error: "Forbidden: Only Super Admin can delete orders" };
+    }
+
+    await connectToDatabase();
+    const deletedOrder = await Order.findByIdAndDelete(orderId);
+    if (!deletedOrder) {
+      return { success: false, error: "Order not found" };
+    }
+
+    revalidatePath("/dashboard/orders");
+    revalidatePath(`/dashboard/orders/${orderId}`);
+    revalidatePath("/account");
+
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message || "Failed to delete order" };
   }
 }
