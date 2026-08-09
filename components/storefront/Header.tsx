@@ -6,10 +6,12 @@ import { ShoppingBag, Heart, Search, User, Menu, X, ShieldCheck } from "lucide-r
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 import CartDrawer from "./CartDrawer";
+import WishlistDrawer from "./WishlistDrawer";
 import Image from "next/image";
 
 export default function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { totalItems } = useCart();
   const { totalWishlist } = useWishlist();
@@ -68,14 +70,19 @@ export default function Header() {
             <Search className="w-5 h-5" />
           </Link>
 
-          <Link href="/account" className="p-2 text-black hover:text-zinc-500 transition relative">
+          {/* Wishlist Button — opens drawer */}
+          <button
+            onClick={() => setIsWishlistOpen(true)}
+            className="p-2 text-black hover:text-zinc-500 transition relative"
+            aria-label="Open wishlist"
+          >
             <Heart className="w-5 h-5" />
             {totalWishlist > 0 && (
               <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-black text-white text-[9px] font-black flex items-center justify-center">
                 {totalWishlist}
               </span>
             )}
-          </Link>
+          </button>
 
           <Link href="/account" className="p-2 text-black hover:text-zinc-500 transition">
             <User className="w-5 h-5" />
@@ -109,6 +116,9 @@ export default function Header() {
 
       {/* Cart Drawer */}
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+
+      {/* Wishlist Drawer */}
+      <WishlistDrawer isOpen={isWishlistOpen} onClose={() => setIsWishlistOpen(false)} />
     </header>
   );
 }

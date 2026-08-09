@@ -323,12 +323,16 @@ export default function ProductDetailClient({
 
               <button
                 onClick={() => {
-                  toggleWishlist(product._id);
-                  toast.success(
-                    isWishlisted(product._id)
-                      ? "Removed from Wishlist"
-                      : "Saved to Wishlist",
-                  );
+                  const wishlisted = isWishlisted(product._id);
+                  toggleWishlist({
+                    id: product._id,
+                    title: product.title,
+                    price: product.price,
+                    compareAtPrice: product.compareAtPrice,
+                    image: product.featuredImage || activeImage,
+                    slug: product.slug,
+                  });
+                  toast.success(wishlisted ? "Removed from Wishlist" : "Saved to Wishlist!");
                 }}
                 className={`p-3.5 rounded-xl border transition ${isWishlisted(product._id)
                     ? "bg-black text-white border-amber-800"

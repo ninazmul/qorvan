@@ -29,8 +29,16 @@ export default function ProductCard({ product }: { product: any }) {
   const handleToggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleWishlist(product._id);
-    toast.success(isWishlisted(product._id) ? "Removed from Wishlist" : "Saved to Wishlist");
+    const wishlisted = isWishlisted(product._id);
+    toggleWishlist({
+      id: product._id,
+      title: product.title,
+      price: product.price,
+      compareAtPrice: product.compareAtPrice,
+      image: product.featuredImage,
+      slug: product.slug,
+    });
+    toast.success(wishlisted ? "Removed from Wishlist" : "Saved to Wishlist!");
   };
 
   const discountPercent =
