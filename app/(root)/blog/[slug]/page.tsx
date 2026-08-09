@@ -32,24 +32,27 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   }
 
   const post = res.data;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
   const pageTitle = post.seoTitle || `${post.title} | QORVAN Journal`;
   const pageDescription = post.seoDescription || post.excerpt;
 
   return {
     title: pageTitle,
     description: pageDescription,
-    keywords: post.seoKeywords?.length ? post.seoKeywords : post.tags,
+    keywords: post.seoKeywords?.length ? post.seoKeywords : post.tags || ["QORVAN Journal", "Luxury Fashion", "Style Guide"],
     alternates: {
-      canonical: post.canonicalUrl || `https://qorvan.com/blog/${post.slug}`,
+      canonical: post.canonicalUrl || `${baseUrl}/blog/${post.slug}`,
     },
     openGraph: {
       title: pageTitle,
       description: pageDescription,
       type: "article",
-      url: `https://qorvan.com/blog/${post.slug}`,
+      url: `${baseUrl}/blog/${post.slug}`,
       images: [
         {
           url: post.featuredImage,
+          width: 1200,
+          height: 630,
           alt: post.title,
         },
       ],
@@ -76,9 +79,10 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
 
   const post = res.data;
   const relatedPosts = res.related || [];
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
 
   // JSON-LD Structured Data for Google Article Schema
-  const jsonLd = {
+  const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.seoTitle || post.title,
@@ -95,13 +99,40 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
       name: "QORVAN",
       logo: {
         "@type": "ImageObject",
-        url: "https://qorvan.com/logo.png",
+        url: `${baseUrl}/assets/images/og-cover.webp`,
       },
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://qorvan.com/blog/${post.slug}`,
+      "@id": `${baseUrl}/blog/${post.slug}`,
     },
+    articleSection: post.category || "Fashion & Style",
+    keywords: post.tags?.join(", ") || "",
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Journal",
+        item: `${baseUrl}/blog`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.title,
+        item: `${baseUrl}/blog/${post.slug}`,
+      },
+    ],
   };
 
   return (
@@ -109,7 +140,11 @@ export default async function BlogPostDetailPage({ params }: BlogPostPageProps) 
       {/* Inject JSON-LD for Google SEO */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       {/* Breadcrumb Header Bar */}

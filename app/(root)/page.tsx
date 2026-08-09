@@ -1,13 +1,67 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { getProducts } from "@/lib/actions/product.actions";
 import { getCategories } from "@/lib/actions/category.actions";
 import { getHeroSlides } from "@/lib/actions/hero.actions";
 import { getApprovedReviews, getProductsForReview } from "@/lib/actions/review.actions";
+import { getSetting } from "@/lib/actions/setting.actions";
 import ProductCard from "@/components/storefront/ProductCard";
 import TestimonialsSection from "@/components/storefront/TestimonialsSection";
 import { ShieldCheck, ArrowRight, Sparkles, Star, Award, Crown, Truck } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const setting = await getSetting();
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
+
+  const title = setting?.seo?.siteTitle || "QORVAN | Luxury Fashion & Leather Goods";
+  const description =
+    setting?.seo?.siteMetaDescription ||
+    "Discover QORVAN masterwork Italian silk tie sets, full-grain executive leather wallets, belts, premium bags, formal shirts, and royal abayas.";
+  const keywords = setting?.seo?.siteKeywords?.length
+    ? setting.seo.siteKeywords
+    : [
+        "QORVAN",
+        "Luxury Fashion Bangladesh",
+        "Italian Silk Tie Sets",
+        "Full-Grain Leather Wallet",
+        "Executive Leather Belt",
+        "Premium Bags",
+        "Formal Shirts",
+        "Royal Abayas",
+      ];
+
+  return {
+    title,
+    description,
+    keywords,
+    alternates: {
+      canonical: baseUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: baseUrl,
+      siteName: "QORVAN",
+      images: [
+        {
+          url: setting?.seo?.ogImage || `${baseUrl}/assets/images/og-cover.webp`,
+          width: 1200,
+          height: 630,
+          alt: "QORVAN Luxury Fashion",
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [setting?.seo?.twitterCardImage || `${baseUrl}/assets/images/og-cover.webp`],
+    },
+  };
+}
 
 export default async function HomePage() {
   const [productsRes, categoriesRes, heroSlidesRes, reviewsRes, reviewProductsRes] = await Promise.all([
@@ -132,8 +186,25 @@ export default async function HomePage() {
 
   const catList = categories.length > 0 ? categories : defaultCategories;
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
+  const homepageItemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "QORVAN Featured Luxury Products",
+    itemListElement: products.slice(0, 8).map((p: any, idx: number) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      url: `${baseUrl}/product/${p.slug}`,
+      name: p.title,
+    })),
+  };
+
   return (
     <div className="space-y-20 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageItemListJsonLd) }}
+      />
       {/* Hero Banner Section */}
       <section className="relative bg-black text-white overflow-hidden border-b border-zinc-200">
         <div className="absolute inset-0 z-0">

@@ -1,7 +1,30 @@
+import { Metadata } from "next";
 import { getCustomPage } from "@/lib/actions/page.actions";
 import { ShieldCheck, Lock, FileText, CheckCircle2 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
+  const title = "Privacy Policy & Data Security | QORVAN";
+  const description = "Learn how QORVAN protects user privacy, safeguards checkout information, and enforces strict security measures for all clients.";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `${baseUrl}/privacy`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${baseUrl}/privacy`,
+      siteName: "QORVAN",
+      images: [`${baseUrl}/assets/images/og-cover.webp`],
+      type: "website",
+    },
+  };
+}
 
 export default async function PrivacyPage() {
   const res = await getCustomPage("privacy");
@@ -12,8 +35,22 @@ export default async function PrivacyPage() {
     sections: [],
   };
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
+
+  const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: page.title,
+    description: page.subtitle || "Privacy policy for QORVAN",
+    url: `${baseUrl}/privacy`,
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
       {/* Hero */}
       <div className="text-center space-y-3 border-b pb-8">
         <div className="w-12 h-12 rounded-2xl bg-black text-white flex items-center justify-center mx-auto mb-2 shadow-md">

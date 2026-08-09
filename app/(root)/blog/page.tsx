@@ -4,19 +4,58 @@ import Image from "next/image";
 import { getBlogPosts } from "@/lib/actions/blog.actions";
 import { ArrowRight, Clock, Tag, User, Search, BookOpen } from "lucide-react";
 
-export const metadata: Metadata = {
-  title: "Editorial Journal & Style Guides | QORVAN Luxury Fashion",
-  description:
-    "Explore the QORVAN Editorial Journal for the latest insights in luxury menswear, bespoke craftsmanship, seasonal style guides, and haute couture trends.",
-  openGraph: {
-    title: "Editorial Journal & Style Guides | QORVAN Luxury Fashion",
-    description:
-      "Explore the QORVAN Editorial Journal for the latest insights in luxury menswear, bespoke craftsmanship, seasonal style guides, and haute couture trends.",
-    type: "website",
-  },
-};
-
 export const revalidate = 60; // Revalidate every 60s
+
+export async function generateMetadata(props: {
+  searchParams: Promise<{ category?: string; search?: string }>;
+}): Promise<Metadata> {
+  const params = await props.searchParams;
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
+
+  let title = "Editorial Journal & Style Guides | QORVAN Luxury Fashion";
+  if (params.category && params.category !== "All") {
+    title = `${params.category} - Editorial Journal | QORVAN Luxury Fashion`;
+  } else if (params.search) {
+    title = `Search: "${params.search}" - QORVAN Journal`;
+  }
+
+  const description =
+    "Explore the QORVAN Editorial Journal for the latest insights in luxury menswear, bespoke craftsmanship, seasonal style guides, and haute couture trends.";
+
+  const canonical = params.category && params.category !== "All"
+    ? `${baseUrl}/blog?category=${encodeURIComponent(params.category)}`
+    : `${baseUrl}/blog`;
+
+  return {
+    title,
+    description,
+    keywords: ["QORVAN Journal", "Luxury Fashion Blog", "Menswear Style Guides", "Leather Craftsmanship", "Haute Couture"],
+    alternates: {
+      canonical,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: "QORVAN",
+      images: [
+        {
+          url: `${baseUrl}/assets/images/og-cover.webp`,
+          width: 1200,
+          height: 630,
+          alt: "QORVAN Editorial Journal",
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${baseUrl}/assets/images/og-cover.webp`],
+    },
+  };
+}
 
 export default async function BlogIndexPage(props: {
   searchParams: Promise<{ category?: string; search?: string }>;
@@ -43,8 +82,54 @@ export default async function BlogIndexPage(props: {
     "Style Guides",
   ];
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
+
+  const collectionPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "QORVAN Editorial Journal & Style Guides",
+    description: "Curated articles on bespoke craftsmanship, sartorial elegance, seasonal wardrobe guides, and luxury lifestyle.",
+    url: `${baseUrl}/blog`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: posts.map((post: any, index: number) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${baseUrl}/blog/${post.slug}`,
+        name: post.title,
+      })),
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: baseUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Journal",
+        item: `${baseUrl}/blog`,
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-white text-black pb-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       {/* Journal Hero Section */}
       <section className="bg-gray-50 border-b border-gray-200 py-16 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto space-y-4">

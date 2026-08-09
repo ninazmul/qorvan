@@ -23,10 +23,23 @@ export async function generateMetadata({
   const p = res.data;
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
 
-  const title = p.seoTitle || p.seo?.title || `${p.title} | QORVAN Luxury`;
+  const title = p.seoTitle || p.seo?.title || `${p.title} - Buy Online in Bangladesh | QORVAN Luxury`;
   const description =
-    p.seoDescription || p.seo?.description || p.shortDescription || p.description?.slice(0, 160);
-  const keywords = p.seoKeywords?.length ? p.seoKeywords : p.seo?.keywords || p.tags || [];
+    p.seoDescription ||
+    p.seo?.description ||
+    p.shortDescription ||
+    `${p.title} - Handcrafted luxury item at ৳${p.price?.toLocaleString()}. Cash on Delivery available across Bangladesh. Buy authentic QORVAN fashion online.`;
+  
+  const keywords = p.seoKeywords?.length
+    ? p.seoKeywords
+    : p.seo?.keywords || [
+        p.title,
+        p.category?.name || "Luxury Fashion",
+        "QORVAN",
+        "Buy online Bangladesh",
+        "Cash on Delivery fashion",
+        ...(p.tags || []),
+      ];
 
   return {
     title,
@@ -39,16 +52,17 @@ export async function generateMetadata({
       title,
       description,
       url: `${baseUrl}/product/${p.slug}`,
+      siteName: "QORVAN",
       images: p.featuredImage
-        ? [{ url: p.featuredImage, width: 800, height: 800, alt: p.title }]
-        : [],
+        ? [{ url: p.featuredImage, width: 1200, height: 1200, alt: p.title }]
+        : [{ url: `${baseUrl}/assets/images/og-cover.webp`, width: 1200, height: 630, alt: p.title }],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: p.featuredImage ? [p.featuredImage] : [],
+      images: p.featuredImage ? [p.featuredImage] : [`${baseUrl}/assets/images/og-cover.webp`],
     },
   };
 }
@@ -82,7 +96,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   // ─── JSON-LD Structured Data ─────────────────────────────
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
 
-  const productJsonLd = {
+  const productJsonLd: Record<string, any> = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.title,
@@ -93,6 +107,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       ? [product.featuredImage]
       : [],
     sku: product.sku,
+    mpn: product.sku || product._id,
+    category: product.category?.name || "Luxury Fashion",
     brand: {
       "@type": "Brand",
       name: product.brand?.name || "QORVAN",
@@ -102,6 +118,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       url: `${baseUrl}/product/${product.slug}`,
       priceCurrency: "BDT",
       price: product.price,
+      itemCondition: "https://schema.org/NewCondition",
       availability:
         product.stock > 0
           ? "https://schema.org/InStock"
@@ -110,13 +127,40 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         "@type": "Organization",
         name: "QORVAN",
       },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "BD",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 7,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn",
+      },
     },
     ...(product.ratings?.count > 0 && {
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: product.ratings.average,
         reviewCount: product.ratings.count,
+        bestRating: 5,
+        worstRating: 1,
       },
+    }),
+    ...(reviews.length > 0 && {
+      review: reviews.slice(0, 5).map((r: any) => ({
+        "@type": "Review",
+        author: {
+          "@type": "Person",
+          name: r.authorName || "Customer",
+        },
+        datePublished: r.createdAt ? new Date(r.createdAt).toISOString() : undefined,
+        reviewBody: r.comment,
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: r.rating || 5,
+          bestRating: 5,
+          worstRating: 1,
+        },
+      })),
     }),
   };
 
@@ -169,4 +213,5 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     </>
   );
 }
+
 

@@ -102,7 +102,7 @@ export default function ProductDetailClient({
                   className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition ${activeImage === img ? "border-amber-800 shadow" : "border-gray-200 opacity-70"
                     }`}
                 >
-                  <img src={img} alt="Gallery thumbnail" className="w-full h-full object-cover" />
+                  <img src={img} alt={`${product.title} view ${idx + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

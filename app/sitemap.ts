@@ -8,57 +8,66 @@ import Blog from "@/lib/database/models/blog.model";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  await connectToDatabase();
-
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
 
-  // Products
-  const products = await Product.find({ status: "active" })
-    .select("slug updatedAt")
-    .lean<any[]>();
+  let productUrls: any[] = [];
+  let categoryUrls: any[] = [];
+  let collectionUrls: any[] = [];
+  let blogUrls: any[] = [];
 
-  const productUrls = products.map((p) => ({
-    url: `${baseUrl}/product/${p.slug}`,
-    lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
-    changeFrequency: "daily" as const,
-    priority: 0.9,
-  }));
+  try {
+    await connectToDatabase();
 
-  // Categories
-  const categories = await Category.find({ isFeatured: true })
-    .select("slug updatedAt")
-    .lean<any[]>();
+    // Products
+    const products = await Product.find({ status: "active" })
+      .select("slug updatedAt")
+      .lean<any[]>();
 
-  const categoryUrls = categories.map((c) => ({
-    url: `${baseUrl}/shop?category=${c.slug}`,
-    lastModified: c.updatedAt ? new Date(c.updatedAt) : new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.8,
-  }));
+    productUrls = products.map((p) => ({
+      url: `${baseUrl}/product/${p.slug}`,
+      lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.9,
+    }));
 
-  // Collections
-  const collections = await Collection.find({ status: "active" })
-    .select("slug updatedAt")
-    .lean<any[]>();
+    // Categories
+    const categories = await Category.find()
+      .select("slug updatedAt")
+      .lean<any[]>();
 
-  const collectionUrls = collections.map((c) => ({
-    url: `${baseUrl}/shop?collection=${c.slug}`,
-    lastModified: c.updatedAt ? new Date(c.updatedAt) : new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.7,
-  }));
+    categoryUrls = categories.map((c) => ({
+      url: `${baseUrl}/shop?category=${c.slug}`,
+      lastModified: c.updatedAt ? new Date(c.updatedAt) : new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    }));
 
-  // Blog Posts
-  const blogPosts = await Blog.find({ isPublished: true })
-    .select("slug updatedAt")
-    .lean<any[]>();
+    // Collections
+    const collections = await Collection.find({ status: "active" })
+      .select("slug updatedAt")
+      .lean<any[]>();
 
-  const blogUrls = blogPosts.map((b) => ({
-    url: `${baseUrl}/blog/${b.slug}`,
-    lastModified: b.updatedAt ? new Date(b.updatedAt) : new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.6,
-  }));
+    collectionUrls = collections.map((c) => ({
+      url: `${baseUrl}/shop?collection=${c.slug}`,
+      lastModified: c.updatedAt ? new Date(c.updatedAt) : new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }));
+
+    // Blog Posts
+    const blogPosts = await Blog.find({ isPublished: true })
+      .select("slug updatedAt")
+      .lean<any[]>();
+
+    blogUrls = blogPosts.map((b) => ({
+      url: `${baseUrl}/blog/${b.slug}`,
+      lastModified: b.updatedAt ? new Date(b.updatedAt) : new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    }));
+  } catch (error) {
+    console.error("Failed to build dynamic sitemap entries:", error);
+  }
 
   return [
     {
@@ -74,13 +83,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.95,
     },
     {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/contact`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/contact`,
+      url: `${baseUrl}/privacy`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    },
+    {
+      url: `${baseUrl}/returns`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.5,

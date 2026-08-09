@@ -6,16 +6,75 @@ import ContactForm from "./ContactForm";
 
 export const revalidate = 120;
 
-export const metadata: Metadata = {
-  title: "Contact Us | Qorvan",
-  description: "Get in touch with us for inquiries, partnerships, or support.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
+  const title = "Contact Customer Concierge & Atelier Support | QORVAN";
+  const description =
+    "Get in touch with QORVAN luxury concierge for inquiries, product care guidance, order support, and bespoke partnerships in Bangladesh.";
+
+  return {
+    title,
+    description,
+    keywords: ["Contact QORVAN", "QORVAN Customer Service", "Luxury Fashion Support Bangladesh", "QORVAN Hotline"],
+    alternates: {
+      canonical: `${baseUrl}/contact`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${baseUrl}/contact`,
+      siteName: "QORVAN",
+      images: [
+        {
+          url: `${baseUrl}/assets/images/og-cover.webp`,
+          width: 1200,
+          height: 630,
+          alt: "Contact QORVAN Customer Support",
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${baseUrl}/assets/images/og-cover.webp`],
+    },
+  };
+}
 
 export default async function ContactPage() {
   const setting = (await getSetting()) || ({} as any);
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
+
+  const contactPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: "Contact QORVAN Concierge",
+    description: "Contact details for QORVAN luxury fashion house.",
+    url: `${baseUrl}/contact`,
+    mainEntity: {
+      "@type": "Organization",
+      name: "QORVAN",
+      url: baseUrl,
+      email: setting?.contactEmail || "support@qorvan.com",
+      telephone: setting?.phoneNumber || "",
+      address: setting?.address
+        ? {
+            "@type": "PostalAddress",
+            streetAddress: setting.address,
+            addressCountry: "BD",
+          }
+        : undefined,
+    },
+  };
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageJsonLd) }}
+      />
       <Toaster />
       {/* Page Header */}
       <div className="bg-primary text-white py-16">

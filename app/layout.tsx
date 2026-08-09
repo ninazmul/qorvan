@@ -62,17 +62,31 @@ export async function generateMetadata(): Promise<Metadata> {
     : new URL(defaultUrl);
 
   return {
-    title: seo.siteTitle || defaultTitle,
+    title: {
+      default: seo.siteTitle || defaultTitle,
+      template: "%s | QORVAN Luxury Fashion",
+    },
     description: seo.siteMetaDescription || defaultDescription,
     keywords: seo.siteKeywords?.length ? seo.siteKeywords : defaultKeywords,
     metadataBase,
     icons: {
-      icon: "./favicon.ico",
-      shortcut: "./favicon.ico",
+      icon: "/favicon.ico",
+      shortcut: "/favicon.ico",
       apple: "/assets/images/placeholder.webp",
     },
     alternates: {
       canonical: seo.canonicalUrlBase || defaultUrl,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
     openGraph: {
       title: seo.ogTitle || seo.siteTitle || defaultTitle,
@@ -120,6 +134,40 @@ export default async function RootLayout({
 }) {
   const setting = await getSetting();
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://qorvan.com";
+
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "QORVAN",
+    url: baseUrl,
+    logo: `${baseUrl}/assets/images/og-cover.webp`,
+    description:
+      "QORVAN is a luxury fashion house offering handcrafted Italian silk tie sets, full-grain leather wallets, executive belts, premium bags, formal shirts, and royal abayas.",
+    contactPoint: setting?.phoneNumber || setting?.contactEmail
+      ? {
+          "@type": "ContactPoint",
+          telephone: setting.phoneNumber || "",
+          email: setting.contactEmail || "",
+          contactType: "customer service",
+          areaServed: "BD",
+          availableLanguage: ["en", "bn"],
+        }
+      : undefined,
+  };
+
+  const webSiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "QORVAN",
+    url: baseUrl,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${baseUrl}/shop?query={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   const cssVars = `
     :root {
       --primary: #000000;
@@ -129,6 +177,20 @@ export default async function RootLayout({
 
   return (
     <html lang="en" data-scroll-behavior="smooth">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(webSiteJsonLd),
+          }}
+        />
+      </head>
       <style precedence="default" href="qorvan-css-vars">{cssVars}</style>
       <body
         className={`${inter.variable} ${dmSerif.variable} ${solaimanLipi.variable} font-sans`}
@@ -139,3 +201,4 @@ export default async function RootLayout({
     </html>
   );
 }
+
