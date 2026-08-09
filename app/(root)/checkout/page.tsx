@@ -4,13 +4,14 @@ import { useState, useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
 import { getDeliveryZones } from "@/lib/actions/delivery.actions";
 import { createOrder } from "@/lib/actions/order.actions";
-import { ShieldCheck, Truck, ArrowRight, Check } from "lucide-react";
+import { ShieldCheck, Truck, ShoppingBag, Check } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, subtotal, clearCart } = useCart();
+  const { cart, subtotal, totalItems, clearCart } = useCart();
   const [deliveryZones, setDeliveryZones] = useState<any[]>([]);
   const [selectedZone, setSelectedZone] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -95,118 +96,168 @@ export default function CheckoutPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto py-24 text-center">
-        <h1 className="text-xl font-bold font-serif text-amber-950">Your Cart is Empty</h1>
+      <div className="max-w-4xl mx-auto py-24 px-4 text-center space-y-4">
+        <ShoppingBag className="w-16 h-16 text-gray-800 mx-auto opacity-40" />
+        <h1 className="text-2xl font-bold font-serif text-gray-900">Your Cart is Empty</h1>
+        <p className="text-xs text-gray-500">Add items to your bag before checking out.</p>
+        <Link
+          href="/shop"
+          className="inline-block py-3 px-6 bg-black text-white font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-zinc-800 transition"
+        >
+          Explore Catalog
+        </Link>
       </div>
     );
   }
 
+  const inputClass =
+    "w-full p-3 text-xs border border-zinc-300 rounded-xl bg-white text-gray-900 placeholder-zinc-400 focus:outline-none focus:border-black transition";
+  const labelClass = "font-bold text-gray-700 block mb-1 text-xs";
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
-      <div className="border-b border-amber-900/10 pb-4">
+      {/* Page Header */}
+      <div className="border-b border-zinc-200 pb-4 flex items-center justify-between gap-4">
         <h1 className="text-2xl sm:text-3xl font-extrabold font-serif text-gray-900">
-          Checkout (Cash on Delivery)
+          Checkout
+          <span className="ml-2 text-base font-medium text-zinc-400">
+            ({totalItems} item{totalItems !== 1 ? "s" : ""})
+          </span>
         </h1>
-        <p className="text-xs text-gray-500">Provide delivery details for instant dispatch</p>
+        <Link
+          href="/cart"
+          className="text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-black underline-offset-2 hover:underline transition"
+        >
+          ← Back to Bag
+        </Link>
       </div>
 
       <form onSubmit={handlePlaceOrder} className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Shipping Form */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-sm space-y-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-amber-950 border-b pb-3">
-            1. Shipping & Contact Information
-          </h2>
+        {/* ── Left: Shipping Form ── */}
+        <div className="lg:col-span-2 space-y-6">
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div>
-              <label className="font-bold text-gray-700 block mb-1">Full Name *</label>
-              <input
-                type="text"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="e.g. Tariqul Islam"
-                className="w-full p-3 border rounded-xl"
-              />
-            </div>
-            <div>
-              <label className="font-bold text-gray-700 block mb-1">Phone Number *</label>
-              <input
-                type="tel"
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="01700000000"
-                className="w-full p-3 border rounded-xl font-mono"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <div>
-              <label className="font-bold text-gray-700 block mb-1">Email Address *</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@domain.com"
-                className="w-full p-3 border rounded-xl"
-              />
-            </div>
-            <div>
-              <label className="font-bold text-gray-700 block mb-1">District / City *</label>
-              <input
-                type="text"
-                required
-                value={city}
-                onChange={(e) => {
-                  setCity(e.target.value);
-                  setDistrict(e.target.value);
-                }}
-                placeholder="Dhaka"
-                className="w-full p-3 border rounded-xl"
-              />
-            </div>
-          </div>
-
-          <div className="text-xs">
-            <label className="font-bold text-gray-700 block mb-1">Full Delivery Address *</label>
-            <textarea
-              required
-              rows={2}
-              value={addressLine}
-              onChange={(e) => setAddressLine(e.target.value)}
-              placeholder="House #, Road #, Area details..."
-              className="w-full p-3 border rounded-xl"
-            />
-          </div>
-
-          {/* Delivery Zone Selector */}
-          <div className="space-y-3 pt-4 border-t">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-amber-950">
-              2. Select Delivery Zone Rate
+          {/* Section 1: Contact & Shipping */}
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6 sm:p-8 shadow-sm space-y-5">
+            <h2 className="text-sm font-extrabold uppercase tracking-[0.15em] text-gray-900 border-b border-zinc-100 pb-3 flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-black text-white text-[10px] font-black flex items-center justify-center flex-shrink-0">1</span>
+              Shipping &amp; Contact
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="e.g. Tariqul Islam"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>Phone Number *</label>
+                <input
+                  type="tel"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="01700000000"
+                  className={`${inputClass} font-mono`}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Email Address *</label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@domain.com"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>District / City *</label>
+                <input
+                  type="text"
+                  required
+                  value={city}
+                  onChange={(e) => {
+                    setCity(e.target.value);
+                    setDistrict(e.target.value);
+                  }}
+                  placeholder="Dhaka"
+                  className={inputClass}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className={labelClass}>Full Delivery Address *</label>
+              <textarea
+                required
+                rows={2}
+                value={addressLine}
+                onChange={(e) => setAddressLine(e.target.value)}
+                placeholder="House #, Road #, Area details..."
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label className={labelClass}>Order Notes (optional)</label>
+              <textarea
+                rows={2}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Any special instructions for delivery..."
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          {/* Section 2: Delivery Zone */}
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6 sm:p-8 shadow-sm space-y-4">
+            <h2 className="text-sm font-extrabold uppercase tracking-[0.15em] text-gray-900 border-b border-zinc-100 pb-3 flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-black text-white text-[10px] font-black flex items-center justify-center flex-shrink-0">2</span>
+              Select Delivery Zone
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {deliveryZones.map((zone) => {
                 const isSelected = selectedZone?._id === zone._id;
-                const isFree = zone.freeDeliveryThreshold && subtotal >= zone.freeDeliveryThreshold;
+                const isFree =
+                  zone.freeDeliveryThreshold && subtotal >= zone.freeDeliveryThreshold;
 
                 return (
                   <div
                     key={zone._id}
                     onClick={() => setSelectedZone(zone)}
-                    className={`p-4 rounded-2xl border cursor-pointer transition flex items-center justify-between ${
+                    className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-center justify-between gap-3 ${
                       isSelected
-                        ? "bg-black text-amber-300 border-amber-950 shadow-md"
-                        : "bg-white text-gray-700 border-gray-200 hover:border-amber-700"
+                        ? "bg-black text-white border-black shadow-md"
+                        : "bg-white text-gray-700 border-zinc-200 hover:border-zinc-400"
                     }`}
                   >
-                    <div>
-                      <div className="font-bold">{zone.name}</div>
-                      <div className="text-[10px] opacity-80 mt-0.5">{zone.estimatedDays}</div>
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                          isSelected ? "border-white bg-white" : "border-zinc-300"
+                        }`}
+                      >
+                        {isSelected && <Check className="w-2.5 h-2.5 text-black" />}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-bold text-xs truncate">{zone.name}</div>
+                        <div className={`text-[10px] mt-0.5 ${isSelected ? "text-zinc-300" : "text-zinc-400"}`}>
+                          {zone.estimatedDays}
+                        </div>
+                      </div>
                     </div>
-                    <div className="font-black text-sm">
+                    <div className={`font-black text-sm flex-shrink-0 ${isFree ? "text-emerald-400" : ""}`}>
                       {isFree ? "FREE" : `৳${zone.baseCharge}`}
                     </div>
                   </div>
@@ -214,47 +265,103 @@ export default function CheckoutPage() {
               })}
             </div>
           </div>
+
+          {/* Order Items Preview */}
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6 sm:p-8 shadow-sm space-y-4">
+            <h2 className="text-sm font-extrabold uppercase tracking-[0.15em] text-gray-900 border-b border-zinc-100 pb-3 flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-black text-white text-[10px] font-black flex items-center justify-center flex-shrink-0">3</span>
+              Review Your Items
+            </h2>
+            <div className="divide-y divide-zinc-100">
+              {cart.map((item) => (
+                <div key={item.id} className="py-3 flex items-center gap-4">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-14 h-16 object-cover rounded-xl border border-zinc-200 flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-xs font-bold text-gray-900 line-clamp-1">{item.title}</h3>
+                    <div className="text-[10px] text-zinc-400 font-mono mt-0.5">SKU: {item.sku}</div>
+                    {item.size && <div className="text-[10px] text-zinc-500">Size: {item.size}</div>}
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <div className="text-xs font-black text-gray-900">৳{(item.price * item.quantity).toLocaleString()}</div>
+                    <div className="text-[10px] text-zinc-400">Qty: {item.quantity}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Order Summary & Payment Button */}
-        <div className="bg-black text-amber-50 p-6 sm:p-8 rounded-3xl border border-amber-900/50 shadow-xl space-y-6">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-amber-300 border-b border-amber-900 pb-3">
-            3. Payment & Order Summary
-          </h2>
-
-          <div className="space-y-3 text-xs">
-            <div className="flex justify-between">
-              <span className="text-amber-300">Bag Subtotal:</span>
-              <span className="font-bold text-amber-100">৳{subtotal.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-amber-300">Delivery Charge:</span>
-              <span className="font-bold text-amber-100">
-                {deliveryCharge === 0 ? "FREE" : `৳${deliveryCharge}`}
-              </span>
-            </div>
-            <div className="border-t border-amber-900/60 pt-3 flex justify-between text-base font-extrabold">
-              <span className="text-amber-200">Total Payable (COD):</span>
-              <span className="text-white">৳{totalPayable.toLocaleString()}</span>
-            </div>
+        {/* ── Right: Order Summary ── */}
+        <div className="bg-black text-white rounded-3xl border border-zinc-800 shadow-2xl overflow-hidden sticky top-28">
+          {/* Card Header */}
+          <div className="px-6 py-5 border-b border-zinc-800">
+            <h2 className="text-sm font-extrabold uppercase tracking-[0.2em] text-white flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4 text-zinc-400" />
+              Order Summary
+            </h2>
           </div>
 
-          <div className="bg-black/40 p-4 rounded-2xl border border-amber-800/40 text-xs space-y-2">
-            <div className="flex items-center gap-2 text-amber-300 font-bold uppercase">
-              <ShieldCheck className="w-4 h-4 text-white" /> Cash on Delivery (COD)
+          <div className="px-6 py-5 space-y-5">
+            {/* Price Breakdown */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-zinc-400">
+                  Subtotal ({totalItems} item{totalItems !== 1 ? "s" : ""})
+                </span>
+                <span className="font-bold text-white">৳{subtotal.toLocaleString()}</span>
+              </div>
+
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-zinc-400 flex items-center gap-1.5">
+                  <Truck className="w-3.5 h-3.5" /> Delivery
+                </span>
+                <span className={`font-bold text-sm ${deliveryCharge === 0 ? "text-emerald-400" : "text-white"}`}>
+                  {deliveryCharge === 0 ? "FREE" : `৳${deliveryCharge}`}
+                </span>
+              </div>
             </div>
-            <p className="text-[11px] text-amber-200/80 leading-relaxed">
-              Pay in cash to the delivery rider upon examining your parcel.
+
+            {/* Total */}
+            <div className="border-t border-zinc-800 pt-4 flex items-center justify-between">
+              <span className="text-base font-extrabold text-white uppercase tracking-wider">Total</span>
+              <span className="text-2xl font-black text-white">৳{totalPayable.toLocaleString()}</span>
+            </div>
+
+            {/* COD Badge */}
+            <div className="bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-3 space-y-1">
+              <div className="flex items-center gap-2 text-white font-extrabold text-xs uppercase tracking-wider">
+                <ShieldCheck className="w-4 h-4 text-zinc-400" />
+                Cash on Delivery
+              </div>
+              <p className="text-[11px] text-zinc-500 leading-relaxed">
+                Pay in cash to the delivery rider upon receiving your parcel.
+              </p>
+            </div>
+
+            {/* Place Order Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex items-center justify-center gap-2 w-full py-4 bg-white hover:bg-zinc-100 text-black font-extrabold text-xs uppercase tracking-[0.2em] rounded-xl transition shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                  Placing Order...
+                </>
+              ) : (
+                "Confirm & Place Order"
+              )}
+            </button>
+
+            <p className="text-center text-[10px] text-zinc-600 uppercase tracking-wider">
+              Secure · COD · Free Returns
             </p>
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-amber-950 font-extrabold text-xs uppercase tracking-widest rounded-xl transition shadow-xl flex items-center justify-center gap-2"
-          >
-            {loading ? "Placing Order..." : "Confirm & Place Order (COD)"}
-          </button>
         </div>
       </form>
     </div>
