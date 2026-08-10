@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useCart } from "@/hooks/useCart";
@@ -26,11 +26,23 @@ export default function WishlistDrawer({
 }) {
   const { wishlistItems, removeFromWishlist, totalWishlist } = useWishlist();
   const { addToCart } = useCart();
-  const portalRef = useRef<Element | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
 
+  // Mount portal target on client
   useEffect(() => {
-    portalRef.current = document.body;
+    setMounted(true);
   }, []);
+
+  // Drive CSS transition: open → slide in, close → slide out
+  useEffect(() => {
+    if (isOpen) {
+      const raf = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(raf);
+    } else {
+      setVisible(false);
+    }
+  }, [isOpen]);
 
   // Lock body scroll when open
   useEffect(() => {
@@ -58,15 +70,23 @@ export default function WishlistDrawer({
     toast.success("Moved to Shopping Bag!");
   };
 
-  if (!isOpen || !portalRef.current) return null;
+  if (!mounted) return null;
 
   const drawer = (
     <div
-      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex justify-end"
+      aria-modal="true"
+      role="dialog"
+      aria-label="Wishlist"
+      className={`fixed inset-0 z-[9999] flex justify-end transition-all duration-300 ease-in-out ${
+        visible ? "bg-black/60 backdrop-blur-sm" : "bg-transparent backdrop-blur-none pointer-events-none"
+      }`}
       onClick={onClose}
+      style={{ visibility: isOpen || visible ? "visible" : "hidden" }}
     >
       <div
-        className="bg-white text-black w-full max-w-md flex flex-col shadow-2xl border-l border-zinc-200"
+        className={`bg-white text-black w-full max-w-md flex flex-col shadow-2xl border-l border-zinc-200 transition-transform duration-300 ease-in-out ${
+          visible ? "translate-x-0" : "translate-x-full"
+        }`}
         style={{ height: "100dvh" }}
         onClick={(e) => e.stopPropagation()}
       >

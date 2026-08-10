@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
@@ -8,11 +8,24 @@ import { ShoppingBag, X, Trash2, ArrowRight } from "lucide-react";
 
 export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { cart, updateQuantity, removeFromCart, subtotal, totalItems } = useCart();
-  const portalRef = useRef<Element | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
 
+  // Mount portal target on client
   useEffect(() => {
-    portalRef.current = document.body;
+    setMounted(true);
   }, []);
+
+  // Drive the CSS transition: open → slide in, close → slide out then unmount
+  useEffect(() => {
+    if (isOpen) {
+      // Allow a frame for the DOM to render before starting transition
+      const raf = requestAnimationFrame(() => setVisible(true));
+      return () => cancelAnimationFrame(raf);
+    } else {
+      setVisible(false);
+    }
+  }, [isOpen]);
 
   // Lock body scroll when open
   useEffect(() => {
@@ -26,15 +39,32 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
     };
   }, [isOpen]);
 
-  if (!isOpen || !portalRef.current) return null;
+  // Don't render portal at all until mounted on client
+  if (!mounted) return null;
+
+  // Keep the portal in the DOM while animating out (visible=false but isOpen just turned false)
+  // We unmount after the CSS transition (300ms) finishes via onTransitionEnd on the overlay.
+  const handleOverlayTransitionEnd = () => {
+    // When the overlay has fully faded out, we can stop rendering — but we rely on
+    // the parent controlling isOpen, so nothing extra is needed here.
+  };
 
   const drawer = (
     <div
-      className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex justify-end"
+      aria-modal="true"
+      role="dialog"
+      aria-label="Shopping bag"
+      className={`fixed inset-0 z-[9999] flex justify-end transition-all duration-300 ease-in-out ${
+        visible ? "bg-black/60 backdrop-blur-sm" : "bg-transparent backdrop-blur-none pointer-events-none"
+      }`}
       onClick={onClose}
+      onTransitionEnd={handleOverlayTransitionEnd}
+      style={{ visibility: isOpen || visible ? "visible" : "hidden" }}
     >
       <div
-        className="bg-white text-black w-full max-w-md flex flex-col shadow-2xl border-l border-zinc-200"
+        className={`bg-white text-black w-full max-w-md flex flex-col shadow-2xl border-l border-zinc-200 transition-transform duration-300 ease-in-out ${
+          visible ? "translate-x-0" : "translate-x-full"
+        }`}
         style={{ height: "100dvh" }}
         onClick={(e) => e.stopPropagation()}
       >
