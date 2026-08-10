@@ -467,7 +467,7 @@ export default function ProductDetailClient({
             <button
               type="submit"
               disabled={submittingReview}
-              className="px-5 py-2 bg-black text-amber-300 font-bold rounded-md hover:bg-black transition"
+              className="px-5 py-2 bg-black text-white font-bold rounded-md hover:bg-black transition"
             >
               {submittingReview ? "Submitting..." : "Submit Review"}
             </button>
